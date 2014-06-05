@@ -19,7 +19,7 @@ body {
   font-size: 0;
   border-top: 1px solid #00AA00;
   color: #00AA00;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0,0,0,0.8);
 }
 
 #ui-info, #ui-commands {

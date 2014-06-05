@@ -115,6 +115,8 @@ module NightfallHack {
                 maxMoves: this.maxMoves,
                 commands: [{
                     name: "Open Backdoor"
+                },{
+                    name: "Do Nothing"
                 }]
             };
         }
@@ -267,6 +269,8 @@ module NightfallHack {
             else {
                 this.showMoveControls(this.selectedProgram);
             }
+
+            (<Game> this.game).domUi.objectSelected(this.selectedProgram.uiData);
         }
 
         startBattle() {

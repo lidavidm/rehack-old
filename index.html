@@ -12,6 +12,18 @@
     <template id="domUi">
         <div id="ui-info">
           <h1>{{ title }}</h1>
+
+          <div id="portrait"></div>
+          <div id="info">
+            <ul>
+              {{ #maxHealth }}
+              <li>Health: {{ health }} / {{ maxHealth }}</li>
+              {{ /maxHealth }}
+              {{ #maxMoves }}
+              <li>Moves Used: {{ moves }} / {{ maxMoves }}</li>
+              {{ /maxMoves }}
+            </ul>
+          </div>
         </div>
         <div id="ui-commands">
           <ul>
