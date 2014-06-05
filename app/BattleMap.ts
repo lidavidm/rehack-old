@@ -1,34 +1,34 @@
 module NightfallHack {
+    export interface BattleMapData {
+        map: number[];
+        width: number;
+        height: number;
+    }
+
     export class BattleMap extends Phaser.Group {
         _width: number;
         _height: number;
         _highlight: Phaser.Image;
-        _deployAddresses: number = 1;
+        _deployAddresses: number = 0;
 
         public onTileClick = new Phaser.Signal();
         
-        constructor(game, parent, name, width, height) {
-            super(game, parent, name);
+        constructor(game, parent, map: BattleMapData) {
+            super(game, parent);
             
-            this._width = width;
-            this._height = height;
+            this._width = map.width;
+            this._height = map.height;
 
             this._highlight = new Phaser.Image(game, -32, -32, 'tile_selected', '');
             this._highlight.visible = false;
 
-            var needed = this._deployAddresses;
-            var left = width * height;
-            for (var w = 0; w < width; w++) {
-                for (var h = 0; h < height; h++) {
+            for (var w = 0; w < map.width; w++) {
+                for (var h = 0; h < map.height; h++) {
                     ((w, h) => {
-                        var tile = 'map_bg_01';
-                        if (Math.random() < needed / left) {
-                            tile = 'map_bg_02';
-                            needed--;
-                        }
-
-                        var image = new Phaser.Image(game, 34 * w, 34 * h, tile, '');
-                        if (tile === 'map_bg_02') {
+                        var tile = map.map[h * map.width + w];
+                        var image = new Phaser.Image(game, 34 * w, 34 * h, 'tileset1', tile);
+                        if (tile === 1) {
+                            this._deployAddresses++;
                             image.inputEnabled = true;
                             image.events.onInputDown.add(() => {
                                 this.onTileClick.dispatch(image, w, h);
@@ -36,7 +36,6 @@ module NightfallHack {
                             });
                         }
                         this.add(image);
-                        left--;
                     })(w, h);
                 }
             }
@@ -56,9 +55,9 @@ module NightfallHack {
 
         eraseDeployAddress(x, y) {
             this.forEach(function(tile) {
-                if (tile.key == 'map_bg_02' && tile.x == 34 * x && tile.y == 34 * y) {
+                if (tile.frame === 1 && tile.x == 34 * x && tile.y == 34 * y) {
                     this.remove(tile, true);
-                    this.add(new Phaser.Image(this.game, 34 * x, 34 * y, 'map_bg_01', ''));
+                    this.add(new Phaser.Image(this.game, 34 * x, 34 * y, 'tileset1', 0));
                     this._deployAddresses--;
                 }
             }, this);

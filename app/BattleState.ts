@@ -8,14 +8,17 @@ module NightfallHack {
     export class BattleProgram extends Phaser.Group {
         static _connectorTextures: { [program: string]: Phaser.BitmapData; } = {};
 
+        _state: BattleState;
         _programTile: Phaser.Sprite;
         _programName: string;
         _healthTiles: Phaser.Group[] = [];
         _moves: number = 0;
         public events: Phaser.Events;
         
-        constructor(game, x, y, programName) {
-            super(game, null);
+        constructor(state, x, y, programName) {
+            super(state.game, null);
+            this._state = state;
+            var game = state.game;
             this._programTile = new Phaser.Sprite(game, x, y, 'program_' + programName, 0);
             this._programTile.inputEnabled = true;
             this.events = this._programTile.events;
@@ -116,7 +119,8 @@ module NightfallHack {
                 commands: [{
                     name: "Open Backdoor"
                 },{
-                    name: "Do Nothing"
+                    name: "Do Nothing",
+                    handler: this._state.programDoNothing.bind(this._state)
                 }]
             };
         }
@@ -138,8 +142,7 @@ module NightfallHack {
         preload() {
             // TODO: move this to BattleMap somehow
             this.game.load.image('background', 'assets/textures/background.png');
-            this.game.load.image('map_bg_01', 'assets/textures/map_bg_01.png');
-            this.game.load.image('map_bg_02', 'assets/textures/map_bg_02.png');
+            this.game.load.spritesheet('tileset1', 'assets/textures/tileset1.png', 32, 32);
             this.game.load.image('tile_selected', 'assets/textures/tile_selected.png');
             this.game.load.spritesheet('tile_move', 'assets/textures/tile_move.png', 32, 32);
             this.game.load.spritesheet('program_backdoor', 'assets/textures/program_backdoor.png', 30, 30);
@@ -149,13 +152,18 @@ module NightfallHack {
             this.game.add.tileSprite(0, 0, 800, 600, "background");
             
             var domUi = (<Game> this.game).domUi;
-            this.map = new BattleMap(this.game, null, 'BattleMap', 16, 8);
+            this.map = new BattleMap(this.game, null, {
+                map: [0,0,0,0,0,1,1,0,0,0,0,0],
+                width: 4,
+                height: 4
+            });
             this.map.x = this.game.world.centerX - this.map.width / 2;
             this.game.add.existing(this.map);
 
             this.programs = this.game.add.group();
             this.programs.x = this.game.world.centerX - this.map.width / 2;
-            
+
+            // TODO move highlight to this group instead
             this.tileUi = this.game.add.group();
             this.tileUi.x = this.game.world.centerX - this.map.width / 2;
 
@@ -199,7 +207,7 @@ module NightfallHack {
 
         loadProgram(program, x, y) {
             this.objectDeselected();
-            var programSprite = new BattleProgram(this.game, 1 + x * 34, 1 + y * 34, program);
+            var programSprite = new BattleProgram(this, 1 + x * 34, 1 + y * 34, program);
             this.programs.add(programSprite);
 
             this.map.eraseDeployAddress(x, y);
@@ -271,6 +279,10 @@ module NightfallHack {
             }
 
             (<Game> this.game).domUi.objectSelected(this.selectedProgram.uiData);
+        }
+
+        programDoNothing() {
+            this.objectDeselected();
         }
 
         startBattle() {

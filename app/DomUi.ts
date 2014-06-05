@@ -47,7 +47,7 @@ module NightfallHack {
 
         objectDeselected() {
             this._selected = null;
-            this._ractive.set({
+            this._ractive.reset({
                 title: '',
                 commands: [],
             });
