@@ -5,22 +5,27 @@
     <meta charset="utf-8" />
     <title>Nightfall</title>
     <link rel="stylesheet" href="main.css" type="text/css" />
+    <script src="http://cdn.ractivejs.org/latest/ractive.js"></script>
     <script src="phaser.js"></script>
     <script src="app.js"></script>
+
+    <template id="domUi">
+        <div id="ui-info">
+          <h1>{{ title }}</h1>
+        </div>
+        <div id="ui-commands">
+          <ul>
+            {{ #commands:i }}
+            <li><button on-click="command">{{ commands[i].name }}</button></li>
+            {{ /commands }}
+          </ul>
+        </div>
+    </template>
 </head>
 <body>
     <div id="container">
       <div id="content"></div>
       <div id="ui">
-        <div id="ui-info">
-          <h1></h1>
-
-          Click a deploy address to get started.
-        </div>
-        <div id="ui-commands">
-          <ul>
-          </ul>
-        </div>
       </div>
     </div>
 </body>
