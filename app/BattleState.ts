@@ -153,8 +153,10 @@ module NightfallHack {
             
             var domUi = (<Game> this.game).domUi;
             this.map = new BattleMap(this.game, null, {
-                map: [0,0,0,0,0,1,1,0,0,0,0,0],
-                width: 4,
+                map: [0,0,0,0,0,0,0,0,
+                      0,0,0,0,0,1,1,0,
+                      0,0,0,0,0,0,0,0],
+                width: 8,
                 height: 4
             });
             this.map.x = this.game.world.centerX - this.map.width / 2;
@@ -162,6 +164,8 @@ module NightfallHack {
 
             this.programs = this.game.add.group();
             this.programs.x = this.game.world.centerX - this.map.width / 2;
+            this.enemies = this.game.add.group();
+            this.enemies.x = this.game.world.centerX - this.map.width / 2;
 
             // TODO move highlight to this group instead
             this.tileUi = this.game.add.group();
@@ -203,6 +207,9 @@ module NightfallHack {
             this.tileUi.add(this.moveDown);
             this.tileUi.add(this.moveLeft);
             this.tileUi.visible = false;
+
+            this.loadEnemyProgram('backdoor', 0, 0);
+            this.loadEnemyProgram('backdoor', 2, 0);
         }
 
         loadProgram(program, x, y) {
@@ -221,6 +228,11 @@ module NightfallHack {
                     }
                 }]);
             }
+        }
+
+        loadEnemyProgram(program, x, y) {
+            var programSprite = new BattleProgram(this, 1 + x * 34, 1 + y * 34, program);
+            this.enemies.add(programSprite);
         }
 
         objectDeselected() {
