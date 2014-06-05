@@ -1,0 +1,84 @@
+@import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic);
+
+body {
+  font-family: "Ubuntu Mono", monospace;
+}
+
+#container {
+  position: relative;
+  width: 800px;
+  height: 600px;
+}
+
+#ui {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  top: 66%;
+  font-size: 0;
+  border-top: 1px solid #00AA00;
+  color: #00AA00;
+  background: rgba(0,0,0,0.7);
+}
+
+#ui-info, #ui-commands {
+  display: inline-block;
+  font-size: 1rem;
+  height: 100%;
+  float: left;
+}
+
+#ui-info {
+  width: calc(66% - 1px);
+  border-right: 1px solid #00AA00;
+}
+
+#ui-info h1 {
+  text-align: center;
+  margin: 0.5 0;
+  font-weight: normal;
+  font-size: 1.5em;
+}
+
+#ui-commands {
+  width: 34%;
+  overflow-y: auto;
+}
+
+#ui-commands ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+#ui-commands ul li {
+  display: block;
+  padding: 0 0.5em;
+  height: 2.5em;
+  line-height: 2.5em;
+}
+
+#ui-commands ul li button {
+  display: block;
+  border: 0;
+  margin: 0;
+  padding: 0;
+  font-family: inherit;
+  color: inherit;
+  width: 100%;
+  height: 100%;
+  background: none;
+  font-size: inherit;
+  text-align: left;
+}
+
+#ui-commands ul li button:hover {
+  color: #00EE00;
+  cursor: pointer;
+}
+
+#ui-commands ul li button:active {
+  color: #007700;
+  border: 0;
+}
