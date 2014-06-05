@@ -1,37 +1,96 @@
 module NightfallHack {
+    export interface BattleObject {
+        x: number;
+        y: number;
+    }
+    
     // TODO move this data into JSON
-    export class BattleProgram extends Phaser.Sprite {
+    export class BattleProgram extends Phaser.Group {
         static _connectorTextures: { [program: string]: Phaser.BitmapData; } = {};
-        static _healthTextures: { [program: string]: Phaser.BitmapData; } = {};
 
+        _programTile: Phaser.Sprite;
         _programName: string;
-        _healthTiles: Phaser.Image[];
+        _healthTiles: Phaser.Group[] = [];
         uiData: UiObject;
+        public events: Phaser.Events;
         
         constructor(game, x, y, programName) {
-            super(game, x, y, 'program_' + programName);
+            super(game, null);
+            this._programTile = new Phaser.Sprite(game, x, y, 'program_' + programName, 0);
+            this._programTile.inputEnabled = true;
+            this.events = this._programTile.events;
+            this.add(this._programTile);
+            
             this._programName = programName;
-            this.inputEnabled = true;
 
             if (!(programName in BattleProgram._connectorTextures)) {
-                var connector = new Phaser.BitmapData(game, 'program_connector_' + programName, 8, 4);
-                connector.fill(255, 255, 255, 1);
+                var connector = new Phaser.BitmapData(game, 'program_connector_' + programName, 6, 6);
+                connector.draw('program_' + programName, 0, 0);
+                connector.update();
+                var color = connector.getPixelRGB(0, 0);
+                connector.fill(color.r, color.g, color.b, 1);
                 BattleProgram._connectorTextures[programName] = connector;
-
-                var health = new Phaser.BitmapData(game, 'program_health_' + programName, 30, 30);
-                health.fill(255, 255, 255, 1);
-                BattleProgram._healthTextures[programName] = connector;
             }
 
             this.uiData = {
                 title: programName,
+                health: 0,
+                maxHealth: 5,
                 commands: [{
                     name: "Open Backdoor"
                 }]
             };
         }
 
-        addHealth() {
+        addHealth(direction: string) {
+            var xOffset = 0;
+            var yOffset = 0;
+
+            if (direction == 'up') {
+                xOffset = 12;
+                yOffset = -4;
+            }
+            else if (direction == 'right') {
+                xOffset = 28;
+                yOffset = 12;
+            }
+            else if (direction == 'down') {
+                xOffset = 12;
+                yOffset = 28;
+            }
+            else if (direction == 'left') {
+                xOffset = -4;
+                yOffset = 12;
+            }
+
+            var group = new Phaser.Group(this.game, this);
+            var image = new Phaser.Image(this.game, this.x, this.y, 'program_' + this._programName, 1);
+            group.add(image);
+            var connector = new Phaser.Image(this.game, this.x + xOffset, this.y + yOffset, '', '');
+            BattleProgram._connectorTextures[this._programName].add(connector);
+            group.add(connector);
+            this.add(group);
+            this._healthTiles.push(group);
+
+            if (this._healthTiles.length > this.uiData.maxHealth) {
+                this._healthTiles.shift().destroy();
+            }
+        }
+
+        get x(): number {
+            return this._programTile.x;
+        }
+
+        set x(x: number) {
+            this._programTile.x = x;
+        }
+
+        get y(): number {
+            return this._programTile.y;
+        }
+
+        set y(y: number) {
+            this._programTile.y = y;
         }
     }
     
@@ -55,7 +114,7 @@ module NightfallHack {
             this.game.load.image('map_bg_02', 'assets/textures/map_bg_02.png');
             this.game.load.image('tile_selected', 'assets/textures/tile_selected.png');
             this.game.load.spritesheet('tile_move', 'assets/textures/tile_move.png', 32, 32);
-            this.game.load.image('program_backdoor', 'assets/textures/program_backdoor.png');
+            this.game.load.spritesheet('program_backdoor', 'assets/textures/program_backdoor.png', 30, 30);
         }
 
         create() {
@@ -143,16 +202,16 @@ module NightfallHack {
             (<Game> this.game).domUi.objectSelected(sprite.uiData);
         }
 
-        showMoveControls(sprite: Phaser.Sprite) {
+        showMoveControls(object: BattleObject) {
             this.tileUi.visible = true;
-            this.tileUi.x = (this.game.world.centerX - this.map.width / 2) + (sprite.x - 1);
-            this.tileUi.y = sprite.y - 1;
+            this.tileUi.x = (this.game.world.centerX - this.map.width / 2) + (object.x - 1);
+            this.tileUi.y = object.y - 1;
         }
 
         move(direction: string) {
             if (!this.selectedProgram) return;
 
-            this.selectedProgram.addHealth();
+            this.selectedProgram.addHealth(direction);
             if (direction == 'up') {
                 this.selectedProgram.y -= 34;
             }
