@@ -11,7 +11,7 @@ module NightfallHack {
         _programTile: Phaser.Sprite;
         _programName: string;
         _healthTiles: Phaser.Group[] = [];
-        uiData: UiObject;
+        _moves: number = 0;
         public events: Phaser.Events;
         
         constructor(game, x, y, programName) {
@@ -27,19 +27,14 @@ module NightfallHack {
                 var connector = new Phaser.BitmapData(game, 'program_connector_' + programName, 6, 6);
                 connector.draw('program_' + programName, 0, 0);
                 connector.update();
-                var color = connector.getPixelRGB(0, 0);
+                var color: any = connector.getPixelRGB(0, 0);
                 connector.fill(color.r, color.g, color.b, 1);
                 BattleProgram._connectorTextures[programName] = connector;
             }
+        }
 
-            this.uiData = {
-                title: programName,
-                health: 0,
-                maxHealth: 5,
-                commands: [{
-                    name: "Open Backdoor"
-                }]
-            };
+        newTurn() {
+            this._moves = 0;
         }
 
         addHealth(direction: string) {
@@ -72,8 +67,14 @@ module NightfallHack {
             this.add(group);
             this._healthTiles.push(group);
 
-            if (this._healthTiles.length > this.uiData.maxHealth) {
+            if (this.health > this.uiData.maxHealth) {
                 this._healthTiles.shift().destroy();
+            }
+
+            this._moves += 1;
+
+            if (this.moves > this.uiData.maxMoves) {
+                throw "Out of moves";
             }
         }
 
@@ -91,6 +92,31 @@ module NightfallHack {
 
         set y(y: number) {
             this._programTile.y = y;
+        }
+
+        get health(): number {
+            return this._healthTiles.length + 1;
+        }
+
+        get moves(): number {
+            return this._moves;
+        }
+
+        get maxMoves(): number {
+            return 3;
+        }
+
+        get uiData(): UiObject {
+            return {
+                title: this._programName,
+                health: this.health,
+                maxHealth: 5,
+                moves: this.moves,
+                maxMoves: this.maxMoves,
+                commands: [{
+                    name: "Open Backdoor"
+                }]
+            };
         }
     }
     
@@ -208,8 +234,16 @@ module NightfallHack {
             this.tileUi.y = object.y - 1;
         }
 
+        hideMoveControls() {
+            this.tileUi.visible = false;
+        }
+
         move(direction: string) {
             if (!this.selectedProgram) return;
+
+            if (this.selectedProgram.moves >= this.selectedProgram.maxMoves) {
+                return;
+            }
 
             this.selectedProgram.addHealth(direction);
             if (direction == 'up') {
@@ -226,12 +260,23 @@ module NightfallHack {
             }
             
             this.map.highlightTile(this.selectedProgram.x - 1, this.selectedProgram.y - 1);
-            this.showMoveControls(this.selectedProgram);
+
+            if (this.selectedProgram.moves == this.selectedProgram.maxMoves) {
+                this.hideMoveControls();
+            }
+            else {
+                this.showMoveControls(this.selectedProgram);
+            }
         }
 
         startBattle() {
-            this.state = 'battle';
+            this.startPlayerTurn();
+        }
+
+        startPlayerTurn() {
+            this.state = 'playerTurn';
             this.programs.forEach(function(sprite) {
+                sprite.newTurn();
                 sprite.events.onInputDown.add(() => {
                     this.programClicked(sprite);
                 });
