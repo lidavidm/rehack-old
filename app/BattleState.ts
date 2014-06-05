@@ -153,9 +153,10 @@ module NightfallHack {
             
             var domUi = (<Game> this.game).domUi;
             this.map = new BattleMap(this.game, null, {
-                map: [0,0,0,0,0,0,0,0,
-                      0,0,0,0,0,1,1,0,
-                      0,0,0,0,0,0,0,0],
+                map: [0,0,0,2,0,0,0,2,
+                      0,0,0,2,0,1,1,0,
+                      0,0,0,0,0,0,0,0,
+                      2,0,0,2,0,0,0,2],
                 width: 8,
                 height: 4
             });
