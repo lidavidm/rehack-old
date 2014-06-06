@@ -171,6 +171,8 @@ module NightfallHack {
             this.game.load.image('tile_selected', 'assets/textures/tile_selected.png');
             this.game.load.spritesheet('tile_move', 'assets/textures/tile_move.png', 32, 32);
             this.game.load.spritesheet('program_backdoor', 'assets/textures/program_backdoor.png', 30, 30);
+            this.game.load.spritesheet('program_exploit1', 'assets/textures/program_exploit1.png', 30, 30);
+            this.game.load.spritesheet('program_macafee', 'assets/textures/program_macafee.png', 30, 30);
         }
 
         create() {
