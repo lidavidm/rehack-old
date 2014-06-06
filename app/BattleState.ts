@@ -47,7 +47,7 @@ module NightfallHack {
 
             if (direction == 'up') {
                 xOffset = 12;
-                yOffset = -4;
+                yOffset = -6;
             }
             else if (direction == 'right') {
                 xOffset = 28;
@@ -58,7 +58,7 @@ module NightfallHack {
                 yOffset = 28;
             }
             else if (direction == 'left') {
-                xOffset = -4;
+                xOffset = -6;
                 yOffset = 12;
             }
 
