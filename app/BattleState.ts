@@ -11,30 +11,29 @@ module NightfallHack {
         static _connectorTextures: { [program: string]: Phaser.BitmapData; } = {};
 
         _state: BattleState;
+        _program: ProgramInfo;
         _programTile: Phaser.Sprite;
-        _programName: string;
         _healthTiles: Phaser.Group[] = [];
         _moves: number = 0;
         public events: Phaser.Events;
         
-        constructor(state, x, y, programName) {
+        constructor(state, x, y, program: ProgramInfo) {
             super(state.game, null);
             this._state = state;
             var game = state.game;
-            this._programTile = new Phaser.Sprite(game, x, y, 'program_' + programName, 0);
+            this._program = program;
+            this._programTile = new Phaser.Sprite(game, x, y, 'program_' + program.texture, 0);
             this._programTile.inputEnabled = true;
             this.events = this._programTile.events;
             this.add(this._programTile);
-            
-            this._programName = programName;
 
-            if (!(programName in BattleProgram._connectorTextures)) {
-                var connector = new Phaser.BitmapData(game, 'program_connector_' + programName, 6, 6);
-                connector.draw('program_' + programName, 0, 0);
+            if (!(program.texture in BattleProgram._connectorTextures)) {
+                var connector = new Phaser.BitmapData(game, 'program_connector_' + program.texture, 6, 6);
+                connector.draw('program_' + program.texture, 0, 0);
                 connector.update();
                 var color: any = connector.getPixelRGB(0, 0);
                 connector.fill(color.r, color.g, color.b, 1);
-                BattleProgram._connectorTextures[programName] = connector;
+                BattleProgram._connectorTextures[program.texture] = connector;
             }
         }
 
@@ -64,10 +63,10 @@ module NightfallHack {
             }
 
             var group = new Phaser.Group(this.game, this);
-            var image = new Phaser.Image(this.game, this.x, this.y, 'program_' + this._programName, 1);
+            var image = new Phaser.Image(this.game, this.x, this.y, 'program_' + this._program.texture, 1);
             group.add(image);
             var connector = new Phaser.Image(this.game, this.x + xOffset, this.y + yOffset, '', '');
-            BattleProgram._connectorTextures[this._programName].add(connector);
+            BattleProgram._connectorTextures[this._program.texture].add(connector);
             group.add(connector);
             this.add(group);
             this._healthTiles.push(group);
@@ -134,22 +133,20 @@ module NightfallHack {
         }
 
         get maxMoves(): number {
-            return 3;
+            return this._program.maxMoves;
         }
 
         get uiData(): UiObject {
             return {
-                title: this._programName,
+                title: this._program.name,
                 health: this.health,
-                maxHealth: 5,
+                maxHealth: this._program.maxHealth,
                 moves: this.moves,
-                maxMoves: this.maxMoves,
-                commands: [{
-                    name: "Open Backdoor"
-                },{
+                maxMoves: this._program.maxMoves,
+                commands: this._program.commands.concat([{
                     name: "Do Nothing",
                     handler: this._state.programDoNothing.bind(this._state)
-                }]
+                }])
             };
         }
     }
@@ -209,10 +206,10 @@ module NightfallHack {
                             domUi.menu([{
                                 name: "Load Backdoor",
                                 tooltip: "Backdoor info/stats/skills",
-                                handler: () => { this.loadProgram('backdoor', x, y); }
+                                handler: () => { this.loadProgram(Programs.Backdoor, x, y); }
                             }, {
-                                name: "Load SKExploit",
-                                handler: () => { this.objectDeselected(); }
+                                name: "Load Exploit Level I",
+                                handler: () => { this.loadProgram(Programs.Exploit1, x, y); }
                             }]);
                         }
                     }]
@@ -237,8 +234,8 @@ module NightfallHack {
             this.tileUi.add(this.moveLeft);
             this.tileUi.visible = false;
 
-            this.loadEnemyProgram('backdoor', 0, 0);
-            this.loadEnemyProgram('backdoor', 2, 0);
+            this.loadEnemyProgram(Programs.MacAFee, 0, 0);
+            this.loadEnemyProgram(Programs.MacAFee, 2, 0);
         }
 
         loadProgram(program, x, y) {
