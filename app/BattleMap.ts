@@ -6,6 +6,7 @@ module NightfallHack {
     }
 
     export class BattleMap extends Phaser.Group {
+        _map: number[];
         _width: number;
         _height: number;
         _highlight: Phaser.Image;
@@ -15,7 +16,8 @@ module NightfallHack {
         
         constructor(game, parent, map: BattleMapData) {
             super(game, parent);
-            
+
+            this._map = map.map;
             this._width = map.width;
             this._height = map.height;
 
@@ -59,8 +61,16 @@ module NightfallHack {
                     this.remove(tile, true);
                     this.add(new Phaser.Image(this.game, 34 * x, 34 * y, 'tileset1', 0));
                     this._deployAddresses--;
+                    this._map[y * this._width + x] = 0;
                 }
             }, this);
+        }
+
+        passable(x, y) {
+            if (x < 0 || y < 0 || x >= this._width || y >= this._height) {
+                return false;
+            }
+            return this._map[y * this._width + x] == 0;
         }
 
         get width(): number {

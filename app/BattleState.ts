@@ -2,6 +2,8 @@ module NightfallHack {
     export interface BattleObject {
         x: number;
         y: number;
+        tileX: number;
+        tileY: number;
     }
     
     // TODO move this data into JSON
@@ -81,6 +83,24 @@ module NightfallHack {
             }
         }
 
+        passable(x: number, y: number) {
+            if (x == this.tileX && y == this.tileY) {
+                return false;
+            }
+
+            var health = this._healthTiles;
+            for (var i = 0; i < health.length; i++) {
+                // assume the tile is child 0 (based on order of addition above)
+                var tile = health[i].children[0];
+                var tileX = (tile.x - 1) / 34;
+                var tileY = (tile.y - 1) / 34;
+                if (x == tileX && y == tileY) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
         get x(): number {
             return this._programTile.x;
         }
@@ -95,6 +115,14 @@ module NightfallHack {
 
         set y(y: number) {
             this._programTile.y = y;
+        }
+
+        get tileX(): number {
+            return (this._programTile.x - 1) / 34;
+        }
+
+        get tileY(): number {
+            return (this._programTile.y - 1) / 34;
         }
 
         get health(): number {
@@ -255,6 +283,24 @@ module NightfallHack {
             this.tileUi.visible = true;
             this.tileUi.x = (this.game.world.centerX - this.map.width / 2) + (object.x - 1);
             this.tileUi.y = object.y - 1;
+            var x = object.tileX, y = object.tileY;
+            this.moveUp.visible = this.passable(x, y - 1);
+            this.moveRight.visible = this.passable(x + 1, y);
+            this.moveDown.visible = this.passable(x, y + 1);
+            this.moveLeft.visible = this.passable(x - 1, y);
+        }
+
+        passable(x, y) {
+            if (!this.map.passable(x, y)) {
+                return false;
+            }
+            var programs = <BattleProgram[]> this.programs.children;
+            for (var i = 0; i < programs.length; i ++) {
+                if (!programs[i].passable(x, y)) {
+                    return false;
+                }
+            }
+            return true;
         }
 
         hideMoveControls() {
