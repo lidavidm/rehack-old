@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 
 <html lang="en">
-<head>
+  <head>
     <meta charset="utf-8" />
     <title>Nightfall</title>
     <link rel="stylesheet" href="main.css" type="text/css" />
@@ -10,6 +10,11 @@
     <script src="app.js"></script>
 
     <template id="domUi">
+      <div id="ui-extra">
+        <button on-click="disconnect">Disconnect</button>
+        <button on-click="end-turn">End Turn</button>
+      </div>
+      <div id="ui-main">
         <div id="ui-info">
           <h1>{{ title }}</h1>
 
@@ -32,13 +37,14 @@
             {{ /commands }}
           </ul>
         </div>
+      </div>
     </template>
-</head>
-<body>
+  </head>
+  <body>
     <div id="container">
       <div id="content"></div>
       <div id="ui">
       </div>
     </div>
-</body>
+  </body>
 </html>

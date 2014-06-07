@@ -218,6 +218,13 @@ module NightfallHack {
                 });
             });
 
+            domUi.onEndTurn.add(() => {
+                this.endPlayerTurn();
+                this.startEnemyTurn();
+                this.endEnemyTurn();
+                this.startPlayerTurn();
+            });
+
             this.moveUp = new Phaser.Sprite(this.game, 0, -34, 'tile_move', 0);
             this.moveRight = new Phaser.Sprite(this.game, 34, 0, 'tile_move', 1);
             this.moveDown = new Phaser.Sprite(this.game, 0, 34, 'tile_move', 2);
@@ -355,6 +362,23 @@ module NightfallHack {
                     this.programClicked(sprite);
                 });
             }, this);
+        }
+
+        endPlayerTurn() {
+            this.objectDeselected();
+        }
+
+        startEnemyTurn() {
+            this.state = 'playerTurn';
+            this.programs.forEach(function(sprite) {
+                sprite.newTurn();
+                sprite.events.onInputDown.add(() => {
+                    this.programClicked(sprite);
+                });
+            }, this);
+        }
+
+        endEnemyTurn() {
         }
 
         update() {

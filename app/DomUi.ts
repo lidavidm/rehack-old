@@ -23,6 +23,7 @@ module NightfallHack {
         private _ractive: any;
 
         public onCommandSelected = new Phaser.Signal();
+        public onEndTurn = new Phaser.Signal();
         
         constructor(element) {
             this._element = element;
@@ -37,6 +38,10 @@ module NightfallHack {
                 if (typeof e.context.handler !== "undefined") {
                     e.context.handler();
                 }
+            });
+
+            this._ractive.on('end-turn', (e) => {
+                this.onEndTurn.dispatch();
             });
         }
 
