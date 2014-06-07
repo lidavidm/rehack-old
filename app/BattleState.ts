@@ -306,6 +306,12 @@ module NightfallHack {
                     return false;
                 }
             }
+            var enemies = <BattleProgram[]> this.enemies.children;
+            for (var i = 0; i < enemies.length; i ++) {
+                if (!enemies[i].passable(x, y)) {
+                    return false;
+                }
+            }
             return true;
         }
 
