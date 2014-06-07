@@ -15,6 +15,7 @@ module NightfallHack {
         _programTile: Phaser.Sprite;
         _healthTiles: Phaser.Group[] = [];
         _moves: number = 0;
+        _commands = [];
         public events: Phaser.Events;
         
         constructor(state, x, y, program: ProgramInfo) {
@@ -34,6 +35,18 @@ module NightfallHack {
                 var color: any = connector.getPixelRGB(0, 0);
                 connector.fill(color.r, color.g, color.b, 1);
                 BattleProgram._connectorTextures[program.texture] = connector;
+            }
+
+            for (var i = 0; i < program.commands.length; i++) {
+                // Create a separate command object because all programs
+                // share the same command data object
+                var command = {
+                    name: program.commands[i].name,
+                };
+                if (typeof program.commands[i].handler !== "undefined") {
+                    command.handler = this.createCommandHandler(program.commands[i]);
+                }
+                this._commands.push(command);
             }
         }
 
@@ -80,6 +93,28 @@ module NightfallHack {
             if (this.moves > this.uiData.maxMoves) {
                 throw "Out of moves";
             }
+        }
+
+        createCommandHandler(commandData) {
+            return () => {
+                console.log('handling command', commandData)
+                if (commandData.type == CommandType.Targeted) {
+                    console.log('targeted command', this.tileX, this.tileY)
+                    this._state.getCommandTarget(
+                        this.tileX, this.tileY, commandData.range,
+                        commandData.target,
+                        (target) => {
+                            commandData.handler(target, this._state);
+                        }
+                    );
+                }
+                else {
+                    commandData.handler(this._state);
+                }
+            };
+        }
+
+        damage(damage: number) {
         }
 
         passable(x: number, y: number) {
@@ -143,7 +178,7 @@ module NightfallHack {
                 maxHealth: this._program.maxHealth,
                 moves: this.moves,
                 maxMoves: this._program.maxMoves,
-                commands: this._program.commands.concat([{
+                commands: this._commands.concat([{
                     name: "Do Nothing",
                     handler: this._state.programDoNothing.bind(this._state)
                 }])
@@ -163,6 +198,7 @@ module NightfallHack {
         moveLeft: Phaser.Sprite;
         moveRight: Phaser.Sprite;
         moveDown: Phaser.Sprite;
+        selectUi: Phaser.Group;
         
         preload() {
             // TODO: move this to BattleMap somehow
@@ -170,6 +206,7 @@ module NightfallHack {
             this.game.load.spritesheet('tileset1', 'assets/textures/tileset1.png', 32, 32);
             this.game.load.image('tile_selected', 'assets/textures/tile_selected.png');
             this.game.load.spritesheet('tile_move', 'assets/textures/tile_move.png', 32, 32);
+            this.game.load.spritesheet('tile_targetable', 'assets/textures/tile_targetable.png', 34, 34);
             this.game.load.spritesheet('program_backdoor', 'assets/textures/program_backdoor.png', 30, 30);
             this.game.load.spritesheet('program_exploit1', 'assets/textures/program_exploit1.png', 30, 30);
             this.game.load.spritesheet('program_macafee', 'assets/textures/program_macafee.png', 30, 30);
@@ -179,6 +216,7 @@ module NightfallHack {
             this.game.add.tileSprite(0, 0, 800, 600, "background");
             
             var domUi = (<Game> this.game).domUi;
+            domUi.show();
             this.map = new BattleMap(this.game, null, {
                 map: [0,0,0,2,0,0,0,2,
                       0,0,0,2,0,1,1,0,
@@ -196,8 +234,11 @@ module NightfallHack {
             this.enemies.x = this.game.world.centerX - this.map.width / 2;
 
             // TODO move highlight to this group instead
+            // TODO fewer redundant groups
             this.tileUi = this.game.add.group();
             this.tileUi.x = this.game.world.centerX - this.map.width / 2;
+            this.selectUi = this.game.add.group();
+            this.selectUi.x = this.game.world.centerX - this.map.width / 2;
 
             this.map.onTileClick.add((image, x, y) => {
                 domUi.objectSelected({
@@ -296,6 +337,10 @@ module NightfallHack {
             this.moveLeft.visible = this.passable(x - 1, y);
         }
 
+        hideMoveControls() {
+            this.tileUi.visible = false;
+        }
+
         passable(x, y) {
             if (!this.map.passable(x, y)) {
                 return false;
@@ -313,10 +358,6 @@ module NightfallHack {
                 }
             }
             return true;
-        }
-
-        hideMoveControls() {
-            this.tileUi.visible = false;
         }
 
         move(direction: string) {
@@ -350,6 +391,51 @@ module NightfallHack {
             }
 
             (<Game> this.game).domUi.objectSelected(this.selectedProgram.uiData);
+        }
+
+        getCommandTarget(xCenter: number, yCenter: number, range: number,
+                         targetType: CommandTargetType,
+                         callback: (target: BattleProgram) => any) {
+            this.hideMoveControls();
+            (<Game> this.game).domUi.menu([{
+                name: "Cancel",
+                handler: () => {
+                    this.programClicked(this.selectedProgram);
+                }
+            }]);
+            var images = [];
+            var rangeSquared = Math.pow(range, 2);
+            for (var x = xCenter - range; x <= xCenter + range; x++) {
+                for (var y = yCenter - range; y <= yCenter + range; y++) {
+                    var distance = Math.pow(x - xCenter, 2) + Math.pow(y - yCenter, 2);
+                    if (distance > rangeSquared) {
+                        continue;
+                    }
+                    // targetType == Enemy
+                    var found = false;
+                    for (var i = 0; i < this.enemies.children.length; i++) {
+                        if (!this.enemies.children[i].passable(x, y)) {
+                            ((enemy) => {
+                                var image = new Phaser.Image(this.game, x * 34, y * 34, 'tile_targetable', 0);
+                                this.selectUi.add(image);
+                                image.inputEnabled = true;
+                                image.events.onInputUp.add(() => {
+                                    callback(enemy);
+                                });
+                                images.push(image);
+                            })(this.enemies.children[i]);
+                            
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        var image = new Phaser.Image(this.game, x * 34, y * 34, 'tile_targetable', 1);
+                        this.selectUi.add(image);
+                        images.push(image);
+                    }
+                }
+            }
         }
 
         programDoNothing() {

@@ -45,6 +45,14 @@ module NightfallHack {
             });
         }
 
+        show() {
+            this._ractive.el.style.display = 'block';
+        }
+
+        hide() {
+            this._ractive.el.style.display = 'none';
+        }
+
         objectSelected(properties: UiObject) {
             this._selected = properties;
             this._ractive.set(properties);

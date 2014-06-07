@@ -4,7 +4,27 @@ module NightfallHack {
         texture: string;
         maxHealth: number;
         maxMoves: number;
-        commands: UiObjectCommand[];
+        commands: ProgramCommand[];
+    }
+
+    export enum CommandType {
+        Targeted,
+        Untargeted
+    }
+    
+    export enum CommandTargetType {
+        Ally,
+        Enemy,
+        Self,
+        Passable,
+        Unpassable
+    }
+
+    export interface ProgramCommand {
+        name: string;
+        handler?: any;
+        type?: CommandType;
+        range?: number;
     }
     
     export var Programs = {
@@ -24,7 +44,13 @@ module NightfallHack {
             maxHealth: 6,
             maxMoves: 3,
             commands: [{
-                name: "Clear Memory"
+                name: "Clear Memory",
+                type: CommandType.Targeted,
+                target: CommandTargetType.Enemy,
+                range: 2,
+                handler: (target: BattleProgram, state: BattleState) => {
+                    target.damage(2);
+                }
             }]
         },
 
