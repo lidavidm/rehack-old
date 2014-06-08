@@ -116,6 +116,18 @@ module NightfallHack {
 
         damage(damage: number) {
             console.log(this._program.name + ' took damage ' + damage);
+            
+            while (damage > 0) {
+                var health = this._healthTiles.shift();
+                if (typeof health !== "undefined") {
+                    health.destroy();
+                }
+                else {
+                    this._programTile.destroy();
+                    this.destroy();
+                    break;
+                }
+            }
         }
 
         passable(x: number, y: number) {
