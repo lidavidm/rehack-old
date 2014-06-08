@@ -15,6 +15,7 @@ module NightfallHack {
         _programTile: Phaser.Sprite;
         _healthTiles: Phaser.Group[] = [];
         _moves: number = 0;
+        _hasUsedCommand: boolean = false;
         _commands = [];
         public events: Phaser.Events;
         
@@ -52,6 +53,7 @@ module NightfallHack {
 
         newTurn() {
             this._moves = 0;
+            this._hasUsedCommand = false;
         }
 
         addHealth(direction: string) {
@@ -97,6 +99,7 @@ module NightfallHack {
 
         createCommandHandler(commandData) {
             return () => {
+                this._hasUsedCommand = true;
                 console.log('handling command', commandData)
                 if (commandData.type == CommandType.Targeted) {
                     console.log('targeted command', this.tileX, this.tileY)
@@ -105,6 +108,9 @@ module NightfallHack {
                         commandData.target,
                         (target) => {
                             commandData.handler(target, this._state);
+                        },
+                        () => {
+                            this.hasUsedCommand = false;
                         }
                     );
                 }
@@ -180,21 +186,33 @@ module NightfallHack {
             return this._moves;
         }
 
+        get hasUsedCommand(): boolean {
+            return this._hasUsedCommand;
+        }
+
+        set hasUsedCommand(used: boolean) {
+            this._hasUsedCommand = used;
+        }
+
         get maxMoves(): number {
             return this._program.maxMoves;
         }
 
         get uiData(): UiObject {
+            var commands = [{
+                name: "Do Nothing",
+                handler: this._state.programDoNothing.bind(this._state)
+            }];
+            if (!this.hasUsedCommand) {
+                commands = this._commands.concat(commands);
+            }
             return {
                 title: this._program.name,
                 health: this.health,
                 maxHealth: this._program.maxHealth,
                 moves: this.moves,
                 maxMoves: this._program.maxMoves,
-                commands: this._commands.concat([{
-                    name: "Do Nothing",
-                    handler: this._state.programDoNothing.bind(this._state)
-                }])
+                commands: commands
             };
         }
     }
@@ -411,17 +429,24 @@ module NightfallHack {
 
         getCommandTarget(xCenter: number, yCenter: number, range: number,
                          targetType: CommandTargetType,
-                         callback: (target: BattleProgram) => any) {
+                         callback: (target: BattleProgram) => any,
+                         cancel: () => any) {
             var images = [];
             
             this.hideMoveControls();
 
-            var cancelHandler = () => {
+            var cleanup = () => {
                 this.programClicked(this.selectedProgram);
                 for (var i = 0; i < images.length; i++) {
                     images[i].destroy();
                 }
             };
+            var cancelHandler = () => {
+                // cleanup must come after as cancel resets "hasUsedCommand"
+                // flag, which determines what is shown in the menu
+                cancel();
+                cleanup();
+            }
             (<Game> this.game).domUi.menu([{
                 name: "Cancel",
                 handler: cancelHandler
@@ -442,7 +467,7 @@ module NightfallHack {
                                 this.selectUi.add(image);
                                 image.inputEnabled = true;
                                 image.events.onInputUp.add(() => {
-                                    cancelHandler();
+                                    cleanup();
                                     callback(enemy);
                                 });
                                 images.push(image);
