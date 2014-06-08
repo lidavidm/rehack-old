@@ -115,6 +115,7 @@ module NightfallHack {
         }
 
         damage(damage: number) {
+            console.log(this._program.name + ' took damage ' + damage);
         }
 
         passable(x: number, y: number) {
@@ -321,16 +322,19 @@ module NightfallHack {
         programClicked(sprite: BattleProgram) {
             this.selectedProgram = sprite;
             this.map.highlightTile(sprite.x - 1, sprite.y - 1);
-            this.showMoveControls(sprite);
+
+            if (this.selectedProgram.moves < this.selectedProgram.maxMoves) {
+                this.showMoveControls();
+            }
 
             (<Game> this.game).domUi.objectSelected(sprite.uiData);
         }
 
-        showMoveControls(object: BattleObject) {
+        showMoveControls() {
             this.tileUi.visible = true;
-            this.tileUi.x = (this.game.world.centerX - this.map.width / 2) + (object.x - 1);
-            this.tileUi.y = object.y - 1;
-            var x = object.tileX, y = object.tileY;
+            this.tileUi.x = (this.game.world.centerX - this.map.width / 2) + (this.selectedProgram.x - 1);
+            this.tileUi.y = this.selectedProgram.y - 1;
+            var x = this.selectedProgram.tileX, y = this.selectedProgram.tileY;
             this.moveUp.visible = this.passable(x, y - 1);
             this.moveRight.visible = this.passable(x + 1, y);
             this.moveDown.visible = this.passable(x, y + 1);
@@ -387,7 +391,7 @@ module NightfallHack {
                 this.hideMoveControls();
             }
             else {
-                this.showMoveControls(this.selectedProgram);
+                this.showMoveControls();
             }
 
             (<Game> this.game).domUi.objectSelected(this.selectedProgram.uiData);
@@ -396,14 +400,20 @@ module NightfallHack {
         getCommandTarget(xCenter: number, yCenter: number, range: number,
                          targetType: CommandTargetType,
                          callback: (target: BattleProgram) => any) {
+            var images = [];
+            
             this.hideMoveControls();
+
+            var cancelHandler = () => {
+                this.programClicked(this.selectedProgram);
+                for (var i = 0; i < images.length; i++) {
+                    images[i].destroy();
+                }
+            };
             (<Game> this.game).domUi.menu([{
                 name: "Cancel",
-                handler: () => {
-                    this.programClicked(this.selectedProgram);
-                }
+                handler: cancelHandler
             }]);
-            var images = [];
             var rangeSquared = Math.pow(range, 2);
             for (var x = xCenter - range; x <= xCenter + range; x++) {
                 for (var y = yCenter - range; y <= yCenter + range; y++) {
@@ -420,6 +430,7 @@ module NightfallHack {
                                 this.selectUi.add(image);
                                 image.inputEnabled = true;
                                 image.events.onInputUp.add(() => {
+                                    cancelHandler();
                                     callback(enemy);
                                 });
                                 images.push(image);
