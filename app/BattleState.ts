@@ -220,6 +220,7 @@ module NightfallHack {
     
     export class BattleState extends Phaser.State {
         map: BattleMap;
+        ai: AIManager;
         programs: Phaser.Group;
         enemies: Phaser.Group;
         state: string = 'deploy';
@@ -264,6 +265,7 @@ module NightfallHack {
             this.programs.x = this.game.world.centerX - this.map.width / 2;
             this.enemies = this.game.add.group();
             this.enemies.x = this.game.world.centerX - this.map.width / 2;
+            this.ai = new AIManager(this.map, this, this.enemies, this.programs);
 
             // TODO move highlight to this group instead
             // TODO fewer redundant groups
@@ -510,16 +512,12 @@ module NightfallHack {
         }
 
         startEnemyTurn() {
-            this.state = 'playerTurn';
-            this.programs.forEach(function(sprite) {
-                sprite.newTurn();
-                sprite.events.onInputDown.add(() => {
-                    this.programClicked(sprite);
-                });
-            }, this);
+            this.state = 'enemyTurn';
+            this.ai.startTurn();
         }
 
         endEnemyTurn() {
+            this.ai.endTurn();
         }
 
         update() {
