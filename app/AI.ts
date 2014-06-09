@@ -114,6 +114,22 @@ module NightfallHack {
 
             return directions;
         }
+
+        commandInRange(program: BattleProgram, commandIndex: number, target: BattleProgram): boolean {
+            // TODO check against health tiles as well
+            var range = program._program.commands[commandIndex].range;
+            var distance = Math.pow(target.tileX - program.tileX, 2) +
+                Math.pow(target.tileY - program.tileY, 2);
+            return distance < Math.pow(range, 2);
+        }
+
+        targetedCommand(program: BattleProgram, commandIndex: number, target: BattleProgram) {
+            var command = program._program.commands[commandIndex];
+            if (!this.commandInRange(program, commandIndex, target)) {
+                throw "AI attempted to use command while not in range";
+            }
+            command.handler(target, this.manager.state);
+        }
     }
 
     class ChaseStrategy extends AIStrategy {
@@ -129,6 +145,10 @@ module NightfallHack {
                     if (this.passableDirection(program, direction)) {
                         this.move(program, direction);
                     }
+                }
+
+                if (this.commandInRange(program, 0, closest)) {
+                    this.targetedCommand(program, 0, closest);
                 }
             }, this);
         }

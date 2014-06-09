@@ -15,7 +15,9 @@ module NightfallHack {
         moves?: number;
         maxMoves?: number;
     }
-    
+
+    // TODO: add a "command log" that shows which programs used what
+    // commands and how much damage was dealt
     export class DomUi {
         private _element: HTMLElement;
         private _selected: UiObject;

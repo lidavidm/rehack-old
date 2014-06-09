@@ -199,6 +199,10 @@ module NightfallHack {
             return this._program.maxMoves;
         }
 
+        get maxHealth(): number {
+            return this._program.maxHealth;
+        }
+
         get uiData(): UiObject {
             var commands = [{
                 name: "Do Nothing",
@@ -510,6 +514,9 @@ module NightfallHack {
         endPlayerTurn() {
             this.objectDeselected();
             this.selectUi.removeAll(true);
+            if (this.enemies.children.length == 0) {
+                this.game.state.start('MainMenu');
+            }
         }
 
         startEnemyTurn() {
@@ -519,6 +526,9 @@ module NightfallHack {
 
         endEnemyTurn() {
             this.ai.endTurn();
+            if (this.programs.children.length == 0) {
+                this.game.state.start('MainMenu');
+            }
         }
 
         update() {

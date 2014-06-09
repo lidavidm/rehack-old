@@ -60,7 +60,13 @@ module NightfallHack {
             maxHealth: 4,
             maxMoves: 2,
             commands: [{
-                name: "Quarantine"
+                name: "Quarantine",
+                type: CommandType.Targeted,
+                target: CommandTargetType.Enemy,
+                range: 2,
+                handler: (target: BattleProgram, state: BattleState) => {
+                    target.damage(target.maxHealth - 1);
+                }
             }]
         }
     };
