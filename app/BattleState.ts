@@ -133,6 +133,7 @@ module NightfallHack {
                     this.destroy();
                     break;
                 }
+                damage--;
             }
         }
 
