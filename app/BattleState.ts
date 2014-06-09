@@ -509,6 +509,7 @@ module NightfallHack {
 
         endPlayerTurn() {
             this.objectDeselected();
+            this.selectUi.removeAll(true);
         }
 
         startEnemyTurn() {
