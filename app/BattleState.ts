@@ -515,7 +515,7 @@ module NightfallHack {
             this.objectDeselected();
             this.selectUi.removeAll(true);
             if (this.enemies.children.length == 0) {
-                this.game.state.start('MainMenu');
+                this.game.state.start('AfterBattle', true, false, true);
             }
         }
 
@@ -527,12 +527,61 @@ module NightfallHack {
         endEnemyTurn() {
             this.ai.endTurn();
             if (this.programs.children.length == 0) {
-                this.game.state.start('MainMenu');
+                this.game.state.start('AfterBattle', true, false, false);
             }
         }
 
         update() {
             
+        }
+    }
+    
+    export class AfterBattle extends Phaser.State {
+        private color;
+        private message: string;
+        private background: string;
+        
+        preload() {
+            this.game.load.image('victorybackground', 'assets/textures/menubackground.png');
+            this.game.load.image('defeatbackground', 'assets/textures/menubackground.png');
+        }
+
+        init(victory) {
+            if (victory) {
+                this.message = "VICTORY";
+                this.background = "victorybackground";
+                this.color = "#00AA00";
+            }
+            else {
+                this.message = "DEFEAT";
+                this.background = "defeatbackground";
+                this.color = "#AA0000";
+            }
+        }
+
+        create() {
+            this.game.add.tileSprite(0, 0, 800, 600, this.background);
+            (<Game> this.game).domUi.hide();
+            
+            var style = {
+                font: "64px Ubuntu Mono",
+                fill: this.color,
+                align: "center"
+            };
+
+            var style2 = {
+                font: "32px Ubuntu Mono",
+                align: "center"
+            };
+            
+            this.game.add.text(8, this.game.world.centerY / 8, this.message, style);
+
+            var continueButton = new TextButton(this.game, 16, this.game.world.centerY, "Continue", style2);
+            continueButton.onClick.add(() => {
+                this.game.state.start('BattleState');
+            });
+
+            this.game.add.existing(continueButton);
         }
     }
 }

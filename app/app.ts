@@ -7,6 +7,7 @@ module NightfallHack {
             this.state.add('Boot', Boot);
             this.state.add('MainMenu', MainMenu);
             this.state.add('BattleState', BattleState);
+            this.state.add('AfterBattle', AfterBattle);
 
             this.state.start('BattleState');
         }
