@@ -272,6 +272,10 @@ module NightfallHack {
                     }
                 }
                 lowest = pullLowest();
+                if (!lowest) {
+                    // No possible path
+                    return;
+                }
             }
 
             var points = [];
@@ -295,6 +299,10 @@ module NightfallHack {
                     return;
                 }
                 var path = this.findPath(program, closest.tileX, closest.tileY);
+                if (!path) {
+                    // TODO: try to just move closer
+                    return;
+                }
                 for (var i = 0; i < path.length; i++) {
                     var point = path[i];
                     var direction;
