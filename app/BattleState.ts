@@ -5,7 +5,7 @@ module NightfallHack {
         tileX: number;
         tileY: number;
     }
-    
+
     // TODO move this data into JSON
     export class BattleProgram extends Phaser.Group {
         static _connectorTextures: { [program: string]: Phaser.BitmapData; } = {};
@@ -18,7 +18,7 @@ module NightfallHack {
         _hasUsedCommand: boolean = false;
         _commands = [];
         public events: Phaser.Events;
-        
+
         constructor(state, x, y, program: ProgramInfo) {
             super(state.game, null);
             this._state = state;
@@ -127,7 +127,7 @@ module NightfallHack {
 
         damage(damage: number) {
             console.log(this._program.name + ' took damage ' + damage);
-            
+
             while (damage > 0) {
                 var health = this._healthTiles.shift();
                 if (typeof health !== "undefined") {
@@ -234,7 +234,7 @@ module NightfallHack {
             };
         }
     }
-    
+
     export class BattleState extends Phaser.State {
         map: BattleMap;
         ai: AIManager;
@@ -249,7 +249,7 @@ module NightfallHack {
         moveRight: Phaser.Sprite;
         moveDown: Phaser.Sprite;
         selectUi: Phaser.Group;
-        
+
         preload() {
             // TODO: move this to BattleMap somehow
             this.game.load.image('background', 'assets/textures/background.png');
@@ -264,7 +264,7 @@ module NightfallHack {
 
         create() {
             this.game.add.tileSprite(0, 0, 800, 600, "background");
-            
+
             var domUi = (<Game> this.game).domUi;
             domUi.show();
             this.map = new BattleMap(this.game, null, {
@@ -419,7 +419,7 @@ module NightfallHack {
             else if (direction == 'left') {
                 this.selectedProgram.x -= 34;
             }
-            
+
             this.map.highlightTile(this.selectedProgram.x - 1, this.selectedProgram.y - 1);
             this.map.occupy(this.selectedProgram.tileX, this.selectedProgram.tileY);
 
@@ -438,7 +438,7 @@ module NightfallHack {
                          callback: (target: BattleProgram) => any,
                          cancel: () => any) {
             var images = [];
-            
+
             this.hideMoveControls();
 
             var cleanup = () => {
@@ -478,7 +478,7 @@ module NightfallHack {
                                 });
                                 images.push(image);
                             })(this.enemies.children[i]);
-                            
+
                             found = true;
                             break;
                         }
@@ -531,15 +531,15 @@ module NightfallHack {
         }
 
         update() {
-            
+
         }
     }
-    
+
     export class AfterBattle extends Phaser.State {
         private color;
         private message: string;
         private background: string;
-        
+
         preload() {
             this.game.load.image('victorybackground', 'assets/textures/menubackground.png');
             this.game.load.image('defeatbackground', 'assets/textures/menubackground.png');
@@ -561,7 +561,7 @@ module NightfallHack {
         create() {
             this.game.add.tileSprite(0, 0, 800, 600, this.background);
             (<Game> this.game).domUi.hide();
-            
+
             var style = {
                 font: "64px Ubuntu Mono",
                 fill: this.color,
@@ -572,7 +572,7 @@ module NightfallHack {
                 font: "32px Ubuntu Mono",
                 align: "center"
             };
-            
+
             this.game.add.text(8, this.game.world.centerY / 8, this.message, style);
 
             var continueButton = new TextButton(this.game, 16, this.game.world.centerY, "Continue", style2);
