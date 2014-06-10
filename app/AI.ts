@@ -70,6 +70,8 @@ module NightfallHack {
             else if (direction == 'left') {
                 program.x -= 34;
             }
+
+            this.manager.map.occupy(program.tileX, program.tileY);
         }
 
         passable(x, y) {
