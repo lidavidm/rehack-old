@@ -5,7 +5,7 @@ module NightfallHack {
         public programs: Phaser.Group;
         public player: Phaser.Group;
         private strategy: AIStrategy;
-        
+
         constructor(map, state, programs, playerPrograms) {
             this.map = map;
             this.state = state;
@@ -136,9 +136,6 @@ module NightfallHack {
         // A* algorithm
         // http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html
         findPath(program: BattleProgram, targetX: number, targetY: number): string[] {
-            function Node(x, y) {
-                
-            }
             // Generally A* uses a priority queue, but we have a low number
             // of nodes (< 100) so hopefully it's not worth the overhead
             // TODO: benchmark this. Does it affect FPS in game?
@@ -241,13 +238,19 @@ module NightfallHack {
             console.log(program.tileX, program.tileY, program.tileX + program.tileY * map.tileWidth, open)
 
             var lowest = pullLowest();
+            var steps = map.tileWidth * map.tileHeight;
             while (lowest.x !== targetX || lowest.y !== targetY) {
+                steps--;
+                // took too long
+                if (steps < 0) {
+                    return null;
+                }
                 lowest.closed = true;
                 console.log("STEP:", lowest.x, lowest.y)
                 var neighbors = getNeighbors(lowest);
                 for (var i = 0; i < neighbors.length; i++) {
                     var neighbor = neighbors[i];
-                    
+
                     var cost = lowest.g + 1;
                     var neighborInOpen = contains(neighbor);
                     var neighborInClosed = neighbor.closed === true;
@@ -278,7 +281,7 @@ module NightfallHack {
                 node = node.parent;
                 if (!node) break;
             }
-            return points;
+            return points.reverse().slice(1);
         }
     }
 
@@ -288,12 +291,35 @@ module NightfallHack {
         runTurn() {
             this.programs.forEach(function(program) {
                 var closest = this.closestPlayer(program);
-                var directions = this.relativeDirection(program, closest);
-                console.log(program.tileX, program.tileY, this.findPath(program, closest.tileX, closest.tileY));
-                for (var i = 0; i < directions.length; i++) {
-                    var direction = directions[i];
+                if (!closest) {
+                    return;
+                }
+                var path = this.findPath(program, closest.tileX, closest.tileY);
+                for (var i = 0; i < path.length; i++) {
+                    var point = path[i];
+                    var direction;
+                    if (point.y > program.tileY) {
+                        direction = 'down';
+                    }
+                    else if (point.y < program.tileY) {
+                        direction = 'up';
+                    }
+                    else if (point.x > program.tileX) {
+                        direction = 'right';
+                    }
+                    else if (point.x < program.tileX) {
+                        direction = 'left';
+                    }
+
+                    if (program.moves == program.maxMoves) {
+                        break;
+                    }
+
                     if (this.passableDirection(program, direction)) {
                         this.move(program, direction);
+                    }
+                    else {
+                        break;
                     }
                 }
 
