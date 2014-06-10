@@ -7,6 +7,7 @@ module NightfallHack {
 
     export class BattleMap extends Phaser.Group {
         _map: number[];
+        _collision: any[] = [];
         _width: number;
         _height: number;
         _highlight: Phaser.Image;
@@ -24,8 +25,8 @@ module NightfallHack {
             this._highlight = new Phaser.Image(game, -32, -32, 'tile_selected', '');
             this._highlight.visible = false;
 
-            for (var w = 0; w < map.width; w++) {
-                for (var h = 0; h < map.height; h++) {
+            for (var h = 0; h < map.height; h++) {
+                for (var w = 0; w < map.width; w++) {
                     ((w, h) => {
                         var tile = map.map[h * map.width + w];
                         var image = new Phaser.Image(game, 34 * w, 34 * h, 'tileset1', tile);
@@ -38,6 +39,13 @@ module NightfallHack {
                             });
                         }
                         this.add(image);
+
+                        if (tile === 0 || tile === 1) {
+                            this._collision.push(true);
+                        }
+                        else {
+                            this._collision.push(false);
+                        }
                     })(w, h);
                 }
             }
@@ -70,7 +78,15 @@ module NightfallHack {
             if (x < 0 || y < 0 || x >= this._width || y >= this._height) {
                 return false;
             }
-            return this._map[y * this._width + x] == 0;
+            return this._collision[y * this._width + x];
+        }
+
+        occupy(x, y) {
+            this._collision[y * this._width + x] = false;
+        }
+
+        withdraw(x, y) {
+            this._collision[y * this._width + x] = true;
         }
 
         get width(): number {

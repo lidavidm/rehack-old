@@ -28,6 +28,7 @@ module NightfallHack {
             this._programTile.inputEnabled = true;
             this.events = this._programTile.events;
             this.add(this._programTile);
+            this._state.map.occupy(this.tileX, this.tileY);
 
             if (!(program.texture in BattleProgram._connectorTextures)) {
                 var connector = new Phaser.BitmapData(game, 'program_connector_' + program.texture, 6, 6);
@@ -86,8 +87,12 @@ module NightfallHack {
             this.add(group);
             this._healthTiles.push(group);
 
+            this._state.map.occupy(this.tileX, this.tileY);
+
             if (this.health > this.uiData.maxHealth) {
-                this._healthTiles.shift().destroy();
+                var group = this._healthTiles.shift();
+                this._withdrawCollision(<Phaser.Image> group.children[0]);
+                group.destroy();
             }
 
             this._moves += 1;
@@ -126,9 +131,11 @@ module NightfallHack {
             while (damage > 0) {
                 var health = this._healthTiles.shift();
                 if (typeof health !== "undefined") {
+                    this._withdrawCollision(<Phaser.Image> health.children[0]);
                     health.destroy();
                 }
                 else {
+                    this._withdrawCollision(<Phaser.Image> this._programTile);
                     this._programTile.destroy();
                     this.destroy();
                     break;
@@ -153,6 +160,12 @@ module NightfallHack {
                 }
             }
             return true;
+        }
+
+        _withdrawCollision(tile) {
+            var x = (tile.x - 1) / 34;
+            var y = (tile.y - 1) / 34;
+            this._state.map.withdraw(x, y);
         }
 
         get x(): number {
@@ -383,22 +396,7 @@ module NightfallHack {
         }
 
         passable(x, y) {
-            if (!this.map.passable(x, y)) {
-                return false;
-            }
-            var programs = <BattleProgram[]> this.programs.children;
-            for (var i = 0; i < programs.length; i ++) {
-                if (!programs[i].passable(x, y)) {
-                    return false;
-                }
-            }
-            var enemies = <BattleProgram[]> this.enemies.children;
-            for (var i = 0; i < enemies.length; i ++) {
-                if (!enemies[i].passable(x, y)) {
-                    return false;
-                }
-            }
-            return true;
+            return this.map.passable(x, y);
         }
 
         move(direction: string) {
@@ -423,6 +421,7 @@ module NightfallHack {
             }
             
             this.map.highlightTile(this.selectedProgram.x - 1, this.selectedProgram.y - 1);
+            this.map.occupy(this.selectedProgram.tileX, this.selectedProgram.tileY);
 
             if (this.selectedProgram.moves == this.selectedProgram.maxMoves) {
                 this.hideMoveControls();
