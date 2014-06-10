@@ -132,6 +132,154 @@ module NightfallHack {
             }
             command.handler(target, this.manager.state);
         }
+
+        // A* algorithm
+        // http://theory.stanford.edu/~amitp/GameProgramming/ImplementationNotes.html
+        findPath(program: BattleProgram, targetX: number, targetY: number): string[] {
+            function Node(x, y) {
+                
+            }
+            // Generally A* uses a priority queue, but we have a low number
+            // of nodes (< 100) so hopefully it's not worth the overhead
+            // TODO: benchmark this. Does it affect FPS in game?
+            var open = [];
+
+            // O(n)
+            var pullLowest = function() {
+                var lowest = 100000;
+                var best = null;
+                var bestIndex = -1;
+                for (var i = 0; i < open.length; i++) {
+                    var current = open[i];
+                    if (current.priority < lowest) {
+                        best = current;
+                        bestIndex = i;
+                    }
+                }
+                open.splice(bestIndex, 1);
+                console.log('open', open);
+                return best;
+            };
+
+            // O(1)? (Array.push)
+            var insert = function(o, priority) {
+                o.priority = priority;
+                open.push(o);
+            };
+
+            // O(n)
+            var remove = function(o) {
+                for (var i = 0; i < open.length; i++) {
+                    var current = open[i];
+                    if (o.x == current.x && o.y == current.y) {
+                        open.splice(i, 1);
+                        return;
+                    }
+                }
+            };
+
+            // O(n)
+            var contains = function(o) {
+                for (var i = 0; i < open.length; i++) {
+                    var current = open[i];
+                    if (o.x == current.x && o.y == current.y) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            var allNodes = [];
+            var map = this.manager.map;
+
+            for (var y = 0; y < map.tileHeight; y++) {
+                for (var x = 0; x < map.tileWidth; x++) {
+                    if (map.passable(x, y) ||
+                        (x == targetX && y == targetY) ||
+                        (x == program.tileX && y == program.tileY)) {
+                        console.log("PUSHING", x, y)
+                        allNodes.push({
+                            x: x,
+                            y: y,
+                            g: 0,
+                            closed: false,
+                            parent: null,
+                            priority: -1
+                        });
+                    }
+                    else {
+                        console.log("SKIPPING", x, y)
+                        allNodes.push(null);
+                    }
+                }
+            }
+            var getNeighbors = function(node) {
+                var offsets = [[1,0], [0,1], [-1,0], [0,-1]];
+                var neighbors = [];
+                for (var i = 0; i < offsets.length; i++) {
+                    var offset = offsets[i];
+                    var tileX = node.x + offset[0];
+                    var tileY = node.y + offset[1];
+                    // remove this and pathfinding wraps around
+                    if (tileX < 0 || tileY < 0 || tileY >= map.tileHeight || tileX >= map.tileWidth) {
+                        continue;
+                    }
+                    var neighbor = allNodes[map.tileWidth * tileY + tileX];
+                    console.log("\tFOUND NEIGHBOR:", tileX, tileY, map.tileWidth * tileY + tileX, neighbor)
+                    if (neighbor !== null && typeof neighbor !== "undefined") {
+                        neighbors.push(neighbor);
+                    }
+                }
+                return neighbors;
+            };
+
+            var h = function(node) {
+                return Math.abs(node.x - targetX) + Math.abs(node.y - targetY);
+            }
+
+            open.push(allNodes[program.tileX + program.tileY * map.tileWidth]);
+            console.log(program.tileX, program.tileY, program.tileX + program.tileY * map.tileWidth, open)
+
+            var lowest = pullLowest();
+            while (lowest.x !== targetX || lowest.y !== targetY) {
+                lowest.closed = true;
+                console.log("STEP:", lowest.x, lowest.y)
+                var neighbors = getNeighbors(lowest);
+                for (var i = 0; i < neighbors.length; i++) {
+                    var neighbor = neighbors[i];
+                    
+                    var cost = lowest.g + 1;
+                    var neighborInOpen = contains(neighbor);
+                    var neighborInClosed = neighbor.closed === true;
+                    var neighborCost = neighbor.g;
+
+                    console.log("\tNEIGHBOR:", neighbor.x, neighbor.y, neighborInOpen, neighbor.closed, cost, neighborCost)
+                    if (neighborInOpen && cost < neighborCost) {
+                        remove(neighbor);
+                    }
+
+                    if (neighborInClosed && cost < neighborCost) {
+                        neighbor.closed = false;
+                    }
+
+                    if (!neighborInOpen && !neighborInClosed) {
+                        neighbor.g = cost;
+                        neighbor.parent = lowest;
+                        insert(neighbor, neighbor.g + h(neighbor));
+                    }
+                }
+                lowest = pullLowest();
+            }
+
+            var points = [];
+            var node = lowest;
+            while (true) {
+                points.push({ x: node.x, y: node.y });
+                node = node.parent;
+                if (!node) break;
+            }
+            return points;
+        }
     }
 
     class ChaseStrategy extends AIStrategy {
@@ -141,7 +289,7 @@ module NightfallHack {
             this.programs.forEach(function(program) {
                 var closest = this.closestPlayer(program);
                 var directions = this.relativeDirection(program, closest);
-
+                console.log(program.tileX, program.tileY, this.findPath(program, closest.tileX, closest.tileY));
                 for (var i = 0; i < directions.length; i++) {
                     var direction = directions[i];
                     if (this.passableDirection(program, direction)) {

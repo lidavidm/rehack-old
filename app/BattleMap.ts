@@ -97,6 +97,14 @@ module NightfallHack {
             return this._height * 32 + (this._height - 1) * 2;
         }
 
+        get tileWidth(): number {
+            return this._width;
+        }
+
+        get tileHeight(): number {
+            return this._height;
+        }
+
         get deployAddresses(): number {
             return this._deployAddresses;
         }
