@@ -6,7 +6,7 @@ module NightfallHack {
         handler?: any;
         tooltip?: string;
     }
-    
+
     export interface UiObject {
         title: string;
         commands: UiObjectCommand[];
@@ -26,7 +26,7 @@ module NightfallHack {
 
         public onCommandSelected = new Phaser.Signal();
         public onEndTurn = new Phaser.Signal();
-        
+
         constructor(element) {
             this._element = element;
             this._ractive = new Ractive({
@@ -53,6 +53,14 @@ module NightfallHack {
 
         hide() {
             this._ractive.el.style.display = 'none';
+        }
+
+        showExtra() {
+            this._ractive.el.classList.remove('without-extra');
+        }
+
+        hideExtra() {
+            this._ractive.el.classList.add('without-extra');
         }
 
         objectSelected(properties: UiObject) {
