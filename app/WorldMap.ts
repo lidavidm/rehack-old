@@ -4,6 +4,40 @@ module NightfallHack {
         layer: Phaser.TilemapLayer;
         domUi: DomUi;
 
+        // TODO move this into JSON
+        netData: any = {
+            "1:1": {
+                name: "Home PC",
+                owned: true,
+                parent: null
+            },
+            "4:1": {
+                name: "Enemy PC #1",
+                owned: false,
+                parent: "1:1"
+            },
+            "6:2": {
+                name: "Enemy PC #2",
+                owned: false,
+                parent: "4:1"
+            },
+            "1:4": {
+                name: "Enemy PC #3",
+                owned: false,
+                parent: "6:2"
+            },
+            "6:6": {
+                name: "Enemy PC #4",
+                owned: false,
+                parent: "4:1"
+            },
+            "2:6": {
+                name: "Enemy PC #5",
+                owned: false,
+                parent: "1:4"
+            }
+        };
+
         preload() {
             this.game.load.image('background', 'assets/textures/background.png');
             this.game.load.tilemap('worldmap', 'assets/maps/worldmap.json', null,
@@ -25,20 +59,34 @@ module NightfallHack {
             this.layer.fixedToCamera = false;
 
             this.game.input.mouse.mouseUpCallback = (e) => {
+                console.log(e.x, this.game.camera.x, e.y, this.game.camera.y)
+                // XXX figure out why
+                var x = e.x + 2*this.game.camera.x;
+                var y = e.y + 2*this.game.camera.y;
                 var point = new Phaser.Point();
-                this.layer.getTileXY(e.x, e.y, point);
+                this.layer.getTileXY(x, y, point);
                 var tileType = this.layer.layer.data[point.y][point.x].index;
-                this.tileClicked(tileType);
+                this.tileClicked(point.x, point.y, tileType);
             };
         }
 
-        tileClicked(type: number) {
+        tileClicked(x: number, y: number, type: number) {
             if (type == 6) {
+                var data = this.netData[x.toString() + ":" + y.toString()];
                 this.domUi.show();
                 this.domUi.objectSelected({
-                    title: "Enemy Computer",
+                    title: data.name,
                     commands: [{
-                        name: "Connect"
+                        name: "Connect",
+                        handler: () => {
+                            this.domUi.showExtra();
+                            this.game.input.mouse.mouseUpCallback = null;
+                            this.game.world.bounds = new Phaser.Rectangle(0, 0, 800, 600);
+                            this.game.camera.bounds = this.game.world.bounds;
+                            this.game.camera.x = 0;
+                            this.game.camera.y = 0;
+                            this.game.state.start('BattleState');
+                        }
                     }]
                 });
             }
