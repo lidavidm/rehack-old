@@ -1,42 +1,8 @@
 module NightfallHack {
-    export class WorldMap extends Phaser.State {
+    export class WorldMap extends State {
         map: Phaser.Tilemap;
         layer: Phaser.TilemapLayer;
         domUi: DomUi;
-
-        // TODO move this into JSON
-        netData: any = {
-            "1:1": {
-                name: "Home PC",
-                owned: true,
-                parent: null
-            },
-            "4:1": {
-                name: "Enemy PC #1",
-                owned: false,
-                parent: "1:1"
-            },
-            "6:2": {
-                name: "Enemy PC #2",
-                owned: false,
-                parent: "4:1"
-            },
-            "1:4": {
-                name: "Enemy PC #3",
-                owned: false,
-                parent: "6:2"
-            },
-            "6:6": {
-                name: "Enemy PC #4",
-                owned: false,
-                parent: "4:1"
-            },
-            "2:6": {
-                name: "Enemy PC #5",
-                owned: false,
-                parent: "1:4"
-            }
-        };
 
         preload() {
             this.game.load.image('background', 'assets/textures/background.png');
@@ -46,7 +12,7 @@ module NightfallHack {
         }
 
         create() {
-            this.domUi = (<Game> this.game).domUi;
+            this.domUi = this.game.domUi;
             this.domUi.hide();
             this.domUi.hideExtra();
             this.game.world.bounds = new Phaser.Rectangle(0, 0, 16 * 64, 16 * 64);
@@ -59,7 +25,6 @@ module NightfallHack {
             this.layer.fixedToCamera = false;
 
             this.game.input.mouse.mouseUpCallback = (e) => {
-                console.log(e.x, this.game.camera.x, e.y, this.game.camera.y)
                 // XXX figure out why
                 var x = e.x + 2*this.game.camera.x;
                 var y = e.y + 2*this.game.camera.y;
@@ -72,22 +37,32 @@ module NightfallHack {
 
         tileClicked(x: number, y: number, type: number) {
             if (type == 6) {
-                var data = this.netData[x.toString() + ":" + y.toString()];
+                var identifier = x.toString() + ":" + y.toString();
+                var data = this.game.save.netData[identifier];
                 this.domUi.show();
-                this.domUi.objectSelected({
-                    title: data.name,
-                    commands: [{
+
+                var commands = [];
+                if (this.reachable(identifier)) {
+                    commands = [{
                         name: "Connect",
                         handler: () => {
+                            // TODO make this standard cleanup (method of NightfallHack.Game)
                             this.domUi.showExtra();
                             this.game.input.mouse.mouseUpCallback = null;
                             this.game.world.bounds = new Phaser.Rectangle(0, 0, 800, 600);
                             this.game.camera.bounds = this.game.world.bounds;
                             this.game.camera.x = 0;
                             this.game.camera.y = 0;
+                            this.domUi.objectDeselected();
+                            this.domUi.hide();
                             this.game.state.start('BattleState');
                         }
                     }]
+                }
+
+                this.domUi.objectSelected({
+                    title: data.name,
+                    commands: commands
                 });
             }
             else {
@@ -109,6 +84,11 @@ module NightfallHack {
             if (this.game.input.keyboard.isDown(Phaser.Keyboard.RIGHT)) {
                 this.game.camera.x += 5;
             }
+        }
+
+        reachable(computer: string) {
+            var current = this.game.save.netData[computer];
+            return (current.owned || (current.parent ? this.game.save.netData[current.parent].owned : false));
         }
     }
 }

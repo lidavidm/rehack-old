@@ -1,6 +1,7 @@
 module NightfallHack {
     export class Game extends Phaser.Game {
         public domUi = new DomUi(document.getElementById('ui'));
+        public save = new SaveGame("Saved Game 01");
 
         constructor() {
             super(800, 600, Phaser.AUTO, 'content', null);
