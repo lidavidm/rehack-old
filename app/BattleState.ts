@@ -113,6 +113,9 @@ module NightfallHack {
                         commandData.target,
                         (target) => {
                             commandData.handler(target, this._state);
+                            // TODO update move controls/collision to
+                            // reflect passable terrain now that something
+                            // is destroyed
                         },
                         () => {
                             this.hasUsedCommand = false;
@@ -292,6 +295,7 @@ module NightfallHack {
             this.selectUi.x = this.game.world.centerX - this.map.width / 2;
 
             this.map.onTileClick.add((image, x, y) => {
+
                 domUi.objectSelected({
                     title: 'Deploy Memory Address',
                     commands: [{
@@ -300,11 +304,23 @@ module NightfallHack {
                             domUi.menu([{
                                 name: "Load Backdoor",
                                 tooltip: "Backdoor info/stats/skills",
-                                handler: () => { this.loadProgram(Programs.Backdoor, x, y); }
+                                handler: () => { this.loadProgram(Programs.Backdoor, x, y); },
+                                program: Programs.Backdoor
                             }, {
                                 name: "Load Exploit Level I",
-                                handler: () => { this.loadProgram(Programs.Exploit1, x, y); }
+                                handler: () => { this.loadProgram(Programs.Exploit1, x, y); },
+                                program: Programs.Exploit1
                             }]);
+
+                            domUi.onCommandHover.removeAll();
+                            domUi.onCommandHover.add((item) => {
+                                // TODO: make program describe its commands
+                                var program = new BattleProgram(this, 0, 0, item.program);
+                                var uiData = program.uiData;
+                                delete uiData.commands;
+                                uiData.title = "Load " + uiData.title;
+                                domUi.objectSelected(uiData);
+                            });
                         }
                     }]
                 });
@@ -497,6 +513,7 @@ module NightfallHack {
         }
 
         startBattle() {
+            (<Game> this.game).domUi.onCommandHover.removeAll();
             this.startPlayerTurn();
         }
 
