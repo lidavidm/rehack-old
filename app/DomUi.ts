@@ -4,6 +4,7 @@ module NightfallHack {
     export interface UiObjectCommand {
         name: string;
         handler?: any;
+        hover?: any;
         tooltip?: string;
     }
 
@@ -25,6 +26,7 @@ module NightfallHack {
         private _ractive: any;
 
         public onCommandSelected = new Phaser.Signal();
+        public onCommandHover = new Phaser.Signal();
         public onEndTurn = new Phaser.Signal();
 
         constructor(element) {
@@ -39,6 +41,15 @@ module NightfallHack {
                 console.log(e.context);
                 if (typeof e.context.handler !== "undefined") {
                     e.context.handler();
+                }
+            });
+
+            this._ractive.on('hover', (e) => {
+                if (typeof e.context.hover !== "undefined") {
+                    e.context.hover();
+                }
+                else {
+                    this.onCommandHover.dispatch(e.context);
                 }
             });
 

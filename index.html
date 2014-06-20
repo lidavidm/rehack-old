@@ -33,7 +33,7 @@
         <div id="ui-commands">
           <ul>
             {{ #commands:i }}
-            <li><button on-click="command">{{ commands[i].name }}</button></li>
+            <li><button on-click="command" on-mouseenter="hover">{{ commands[i].name }}</button></li>
             {{ /commands }}
           </ul>
         </div>
