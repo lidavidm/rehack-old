@@ -3,7 +3,7 @@ module NightfallHack {
         private newGame: TextButton;
         private loadGame: TextButton;
         private normalColor = "#00AA00";
-        
+
         preload() {
             this.game.load.image('menubackground', 'assets/textures/menubackground.png');
         }
@@ -11,7 +11,7 @@ module NightfallHack {
         create() {
             this.game.add.tileSprite(0, 0, 800, 600, "menubackground");
             (<Game> this.game).domUi.hide();
-            
+
             var style = {
                 font: "64px Ubuntu Mono",
                 fill: this.normalColor,
@@ -22,7 +22,7 @@ module NightfallHack {
                 fill: this.normalColor,
                 align: "center"
             };
-            
+
             this.game.add.text(8, this.game.world.centerY / 8, "re/hack", style);
             this.game.add.text(8, 2 * this.game.world.centerY / 4, "A GAME", style2);
 

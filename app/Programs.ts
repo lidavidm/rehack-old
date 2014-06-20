@@ -11,7 +11,7 @@ module NightfallHack {
         Targeted,
         Untargeted
     }
-    
+
     export enum CommandTargetType {
         Ally,
         Enemy,
@@ -26,7 +26,8 @@ module NightfallHack {
         type?: CommandType;
         range?: number;
     }
-    
+
+    // TODO subclass Program to provide custom behaviors?
     export var Programs = {
         Backdoor: {
             name: "Backdoor",
