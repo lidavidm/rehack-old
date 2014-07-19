@@ -1,3 +1,5 @@
+///<reference path="../phaser.d.ts"/>
+
 module NightfallHack {
     export class Game extends Phaser.Game {
         public domUi = new DomUi(document.getElementById('ui'));

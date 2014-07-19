@@ -18,7 +18,7 @@ module NightfallHack {
         name: string = "Saved Game 01";
         netData: NetworkGraph = {
             "1:1": {
-                name: "Home PC",
+                name: "Home—CORE",
                 owned: true,
                 parent: null,
                 map: "map_01"
