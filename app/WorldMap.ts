@@ -30,7 +30,7 @@ module NightfallHack {
                 var y = e.y + 2*this.game.camera.y;
                 var point = new Phaser.Point();
                 this.layer.getTileXY(x, y, point);
-                var tileType = this.layer.layer.data[point.y][point.x].index;
+                var tileType = (<any> this.layer.layer).data[point.y][point.x].index;
                 this.tileClicked(point.x, point.y, tileType);
             };
         }
@@ -42,7 +42,8 @@ module NightfallHack {
                 this.domUi.show();
 
                 var commands = [];
-                if (this.reachable(identifier)) {
+                var reachable = this.reachable(identifier);
+                if (reachable) {
                     commands = [{
                         name: "Connect",
                         handler: () => {
@@ -60,8 +61,9 @@ module NightfallHack {
                     }]
                 }
 
+                var title = reachable ? data.name : "<Unknown node>";
                 this.domUi.objectSelected({
-                    title: data.name,
+                    title: title,
                     commands: commands
                 });
             }
