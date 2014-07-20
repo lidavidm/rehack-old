@@ -3,6 +3,7 @@
 module NightfallHack {
     export class Game extends Phaser.Game {
         public domUi = new DomUi(document.getElementById('ui'));
+        public chatUi = new ChatUi(document.getElementById('ui-chat'));
         public save = new SaveGame("Saved Game 01");
 
         constructor() {

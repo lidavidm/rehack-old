@@ -39,11 +39,43 @@
         </div>
       </div>
     </template>
+
+    <template id="chatUi">
+      <div id="ui-chat-who">
+        <div id="ui-chat-avatar">
+          <span class="avatar-block"></span>
+          <span class="avatar-block"></span>
+          <span class="avatar-block"></span>
+          <span class="avatar-block"></span>
+          <span class="avatar-block"></span>
+          <span class="avatar-block"></span>
+          <span class="avatar-block"></span>
+          <span class="avatar-block"></span>
+        </div>
+        <div id="ui-chat-name">
+          Chatting with l33tnerd
+        </div>
+      </div>
+      <div id="ui-dialogue">
+        <ul class="ui-dialogue-list" id="ui-dialogue-entries">
+          <li><span class="name">l33tnerd</span><span class="message">Hey.</span></li>
+          <li class="player"><span class="name">You</span><span class="message">Hey.</span></li>
+          <li><span class="name">l33tnerd</span><span class="message">I got a job for you</span></li>
+          <li><span class="name">l33tnerd</span><span class="message">Interested?</span></li>
+        </ul>
+        <ul class="ui-dialogue-list" id="ui-dialogue-choices">
+          <li><span class="message">What kind of job?</span></li>
+          <li><span class="message">I’m down.</span></li>
+        </ul>
+      </div>
+    </template>
   </head>
   <body>
     <div id="container">
       <div id="content"></div>
       <div id="ui">
+      </div>
+      <div id="ui-chat">
       </div>
     </div>
   </body>

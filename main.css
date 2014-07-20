@@ -10,7 +10,7 @@ body {
   height: 600px;
 }
 
-#ui {
+#ui, #ui-chat {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -28,15 +28,154 @@ body {
   margin-top: 3%;
 }
 
+#ui-chat {
+  font-size: 1rem;
+  top: 2.5%;
+  bottom: 45%;
+  right: 2.5%;
+  left: 55%;
+  border: 1px solid #00AA00;
+  background: rgba(0,0,0,0.8);
+  color: #FFF;
+}
+
+#ui-chat-who {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1.25em;
+  border-bottom: 1px solid #00AA00;
+}
+
+#ui-chat-avatar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  width: 20%;
+  font-size: 0;
+}
+
+#ui-chat-avatar .avatar-block {
+  display: inline-block;
+  width: 12.5%;
+  height: 100%;
+}
+
+#ui-chat-avatar .avatar-block:nth-child(1) {
+  background-color: #0099AA;
+}
+
+#ui-chat-avatar .avatar-block:nth-child(2) {
+  background-color: #AA9900;
+}
+
+#ui-chat-avatar .avatar-block:nth-child(3) {
+  background-color: #AA9900;
+}
+
+#ui-chat-avatar .avatar-block:nth-child(4) {
+  background-color: #AA0099;
+}
+
+#ui-chat-avatar .avatar-block:nth-child(5) {
+  background-color: #9900AA;
+}
+
+#ui-chat-avatar .avatar-block:nth-child(6) {
+  background-color: #559955;
+}
+
+#ui-chat-avatar .avatar-block:nth-child(7) {
+  background-color: #995555;
+}
+
+#ui-chat-avatar .avatar-block:nth-child(8) {
+  background-color: #555599;
+}
+
+#ui-chat-name {
+  position: absolute;
+  top: 0;
+  left: 20%;
+  bottom: 0;
+  right: 0;
+  text-transform: uppercase;
+  line-height: 1.25em;
+  padding: 0 0.25em;
+}
+
+#ui-dialogue {
+  position: absolute;
+  top: 1.25em;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.ui-dialogue-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ui-dialogue-list .name {
+  color: #00AA00;
+}
+
+.ui-dialogue-list .player .name {
+  color: #AA0000;
+}
+
+.ui-dialogue-list .name:after {
+  color: #00AA00;
+  content: ": ";
+}
+
+#ui-dialogue-entries {
+  margin: 0.25em;
+}
+
+#ui-dialogue-choices {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  counter-reset: message;
+  border-top: 1px solid #00AA00;
+}
+
+#ui-dialogue-choices .message {
+  width: 100%;
+  display: block;
+  padding: 0.25em 0;
+  cursor: pointer;
+}
+
+#ui-dialogue-choices .message:hover {
+  background: #007700;
+}
+
+#ui-dialogue-choices .message:active {
+  background: #004400;
+}
+
+#ui-dialogue-choices .message:before {
+  color: #00AA00;
+  content: counter(message) "> ";
+  counter-increment: message;
+}
+
 #ui-extra {
   height: 10%;
 }
 
 #ui-extra button {
   font-size: 1rem;
+  color: inherit;
   border: 1px solid #00AA00;
   background: rgba(0,0,0,0.8);
-  color: inherit;
   display: inline-block;
   margin: 0;
   height: 100%;
