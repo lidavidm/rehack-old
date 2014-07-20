@@ -14,9 +14,11 @@ module NightfallHack {
         _deployAddresses: number = 0;
 
         public onTileClick = new Phaser.Signal();
-        
+
         constructor(game, parent, map: BattleMapData) {
             super(game, parent);
+
+            game.add.tileSprite(0, 0, 800, 600, "background");
 
             this._map = map.map;
             this._width = map.width;
@@ -107,6 +109,16 @@ module NightfallHack {
 
         get deployAddresses(): number {
             return this._deployAddresses;
+        }
+
+        static loadAssets(game: Phaser.Game) {
+            game.load.spritesheet('tileset1', 'assets/textures/tileset1.png', 32, 32);
+            game.load.image('tile_selected', 'assets/textures/tile_selected.png');
+            game.load.spritesheet('tile_move', 'assets/textures/tile_move.png', 32, 32);
+            game.load.spritesheet('tile_targetable', 'assets/textures/tile_targetable.png', 34, 34);
+            game.load.spritesheet('program_backdoor', 'assets/textures/program_backdoor.png', 30, 30);
+            game.load.spritesheet('program_exploit1', 'assets/textures/program_exploit1.png', 30, 30);
+            game.load.spritesheet('program_macafee', 'assets/textures/program_macafee.png', 30, 30);
         }
     }
 }

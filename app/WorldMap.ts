@@ -56,7 +56,7 @@ module NightfallHack {
                             this.game.camera.y = 0;
                             this.domUi.objectDeselected();
                             this.domUi.hide();
-                            this.game.state.start('BattleState');
+                            this.game.state.start('BattleState', true, false, data.map);
                         }
                     }]
                 }

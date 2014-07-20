@@ -239,6 +239,7 @@ module NightfallHack {
     }
 
     export class BattleState extends Phaser.State {
+        mapfile: string;
         map: BattleMap;
         ai: AIManager;
         programs: Phaser.Group;
@@ -253,23 +254,25 @@ module NightfallHack {
         moveDown: Phaser.Sprite;
         selectUi: Phaser.Group;
 
+        init(map: string) {
+            this.mapfile = map;
+        }
+
         preload() {
-            // TODO: move this to BattleMap somehow
-            this.game.load.image('background', 'assets/textures/background.png');
-            this.game.load.spritesheet('tileset1', 'assets/textures/tileset1.png', 32, 32);
-            this.game.load.image('tile_selected', 'assets/textures/tile_selected.png');
-            this.game.load.spritesheet('tile_move', 'assets/textures/tile_move.png', 32, 32);
-            this.game.load.spritesheet('tile_targetable', 'assets/textures/tile_targetable.png', 34, 34);
-            this.game.load.spritesheet('program_backdoor', 'assets/textures/program_backdoor.png', 30, 30);
-            this.game.load.spritesheet('program_exploit1', 'assets/textures/program_exploit1.png', 30, 30);
-            this.game.load.spritesheet('program_macafee', 'assets/textures/program_macafee.png', 30, 30);
+            this.game.load.json('map', 'assets/maps/' + this.mapfile + '.json');
+            BattleMap.loadAssets(this.game);
+            this.game.load.onFileComplete.add((progress, key) => {
+                if (key === 'map') {
+                    var url = 'assets/textures/' + this.cache.getJSON('map').background + '.png';
+                    this.game.load.image('background', url);
+                }
+            });
         }
 
         create() {
-            this.game.add.tileSprite(0, 0, 800, 600, "background");
-
             var domUi = (<Game> this.game).domUi;
             domUi.show();
+            var mapdata = this.cache.getJSON('map');
             this.map = new BattleMap(this.game, null, {
                 map: [0,0,0,2,0,0,0,2,
                       0,0,0,2,0,1,1,0,
@@ -351,8 +354,10 @@ module NightfallHack {
             this.tileUi.add(this.moveLeft);
             this.tileUi.visible = false;
 
-            this.loadEnemyProgram(Programs.MacAFee, 0, 0);
-            this.loadEnemyProgram(Programs.MacAFee, 2, 0);
+            mapdata.enemies.forEach((enemy) => {
+                this.loadEnemyProgram(Programs[enemy.program], enemy.x, enemy.y);
+                this.loadEnemyProgram(Programs[enemy.program], enemy.x, enemy.y);
+            });
         }
 
         loadProgram(program, x, y) {

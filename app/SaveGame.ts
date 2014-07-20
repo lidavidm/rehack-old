@@ -27,7 +27,7 @@ module NightfallHack {
                 name: "Enemy PC #1",
                 owned: false,
                 parent: "1:1",
-                map: "map_01"
+                map: "map_pc1"
             },
             "6:2": {
                 name: "Enemy PC #2",
