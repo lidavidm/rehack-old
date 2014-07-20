@@ -20,14 +20,37 @@ Themes:
 
 ## Player Character
 
-Who:
+### Who
 
-Motivations:
+### Motivations
+
+Examples:
+- Armitage & cure in Neuromancer
+- Megan in Deus Ex: Human Revolution
+- Juanita in Snow Crash
+
+Our problem: no physical basis to game - purely digital
+
+- Intellectual hubris
+- Curiosity
+- Playing off various factions after initial discovery
 
 ## The Bad Guys
 
-Who:
+- Government (the incompetent but powerful/lucky enemy)
+  - Security agency
+  - Congress
+  - Military
+- Security contractor
+- Security firm (archetype: Symantec)
+- Software firm (archetype: Microsoft)
+- Other software firm (archetype: Google)
 
-Motivations:
+### Who
+
+### Motivations
 
 ## Plot
+
+1. Discovery of <>
+1. Contacted by <> and blackmailed into <>
