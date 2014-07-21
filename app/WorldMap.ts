@@ -3,6 +3,7 @@ module NightfallHack {
         map: Phaser.Tilemap;
         layer: Phaser.TilemapLayer;
         domUi: DomUi;
+        chatUi: ChatUi;
 
         preload() {
             this.game.load.image('background', 'assets/textures/background.png');
@@ -13,8 +14,11 @@ module NightfallHack {
 
         create() {
             this.domUi = this.game.domUi;
+            this.chatUi = this.game.chatUi;
             this.domUi.hide();
             this.domUi.hideExtra();
+            this.chatUi.setName('l33tnerd');
+
             this.game.world.bounds = new Phaser.Rectangle(0, 0, 16 * 64, 16 * 64);
             this.game.camera.bounds = this.game.world.bounds;
             this.game.add.tileSprite(0, 0, 16*64, 16*64, "background");

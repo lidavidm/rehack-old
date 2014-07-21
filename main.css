@@ -63,36 +63,148 @@ body {
   height: 100%;
 }
 
-#ui-chat-avatar .avatar-block:nth-child(1) {
-  background-color: #0099AA;
+#ui-chat-avatar .avatar-block.char-1 {
+  background-color: #FF0044
 }
 
-#ui-chat-avatar .avatar-block:nth-child(2) {
-  background-color: #AA9900;
+#ui-chat-avatar .avatar-block.char-2 {
+  background-color: #DD4422
 }
 
-#ui-chat-avatar .avatar-block:nth-child(3) {
-  background-color: #AA9900;
+#ui-chat-avatar .avatar-block.char-3 {
+  background-color: #44DD22
 }
 
-#ui-chat-avatar .avatar-block:nth-child(4) {
-  background-color: #AA0099;
+#ui-chat-avatar .avatar-block.char-4 {
+  background-color: #2244DD
 }
 
-#ui-chat-avatar .avatar-block:nth-child(5) {
-  background-color: #9900AA;
+#ui-chat-avatar .avatar-block.char-5 {
+  background-color: #4422DD
 }
 
-#ui-chat-avatar .avatar-block:nth-child(6) {
-  background-color: #559955;
+#ui-chat-avatar .avatar-block.char-6 {
+  background-color: #22DD44
 }
 
-#ui-chat-avatar .avatar-block:nth-child(7) {
-  background-color: #995555;
+#ui-chat-avatar .avatar-block.char-7 {
+  background-color: #DD2244
 }
 
-#ui-chat-avatar .avatar-block:nth-child(8) {
-  background-color: #555599;
+#ui-chat-avatar .avatar-block.char-8 {
+  background-color: #446699
+}
+
+#ui-chat-avatar .avatar-block.char-9 {
+  background-color: #664499
+}
+
+#ui-chat-avatar .avatar-block.char-_ {
+  background-color: #996644
+}
+
+#ui-chat-avatar .avatar-block.char-a {
+  background-color: #0099AA
+}
+
+#ui-chat-avatar .avatar-block.char-b {
+  background-color: #9900AA
+}
+
+#ui-chat-avatar .avatar-block.char-c {
+  background-color: #AA9900
+}
+
+#ui-chat-avatar .avatar-block.char-d {
+  background-color: #99AA00
+}
+
+#ui-chat-avatar .avatar-block.char-e {
+  background-color: #AA0099
+}
+
+#ui-chat-avatar .avatar-block.char-f {
+  background-color: #00AA99
+}
+
+#ui-chat-avatar .avatar-block.char-g {
+  background-color: #555599
+}
+
+#ui-chat-avatar .avatar-block.char-h {
+  background-color: #995555
+}
+
+#ui-chat-avatar .avatar-block.char-i {
+  background-color: #559955
+}
+
+#ui-chat-avatar .avatar-block.char-j {
+  background-color: #CC0077
+}
+
+#ui-chat-avatar .avatar-block.char-k {
+  background-color: #00CC77
+}
+
+#ui-chat-avatar .avatar-block.char-l {
+  background-color: #7700CC
+}
+
+#ui-chat-avatar .avatar-block.char-m {
+  background-color: #0077CC
+}
+
+#ui-chat-avatar .avatar-block.char-n {
+  background-color: #77CC00
+}
+
+#ui-chat-avatar .avatar-block.char-o {
+  background-color: #CC7700
+}
+
+#ui-chat-avatar .avatar-block.char-p {
+  background-color: #CC2255
+}
+
+#ui-chat-avatar .avatar-block.char-q {
+  background-color: #22CC55
+}
+
+#ui-chat-avatar .avatar-block.char-r {
+  background-color: #5522CC
+}
+
+#ui-chat-avatar .avatar-block.char-s {
+  background-color: #2255CC
+}
+
+#ui-chat-avatar .avatar-block.char-t {
+  background-color: #55CC22
+}
+
+#ui-chat-avatar .avatar-block.char-u {
+  background-color: #CC5522
+}
+
+#ui-chat-avatar .avatar-block.char-v {
+  background-color: #FF4400
+}
+
+#ui-chat-avatar .avatar-block.char-w {
+  background-color: #44FF00
+}
+
+#ui-chat-avatar .avatar-block.char-x {
+  background-color: #0044FF
+}
+
+#ui-chat-avatar .avatar-block.char-y {
+  background-color: #4400FF
+}
+
+#ui-chat-avatar .avatar-block.char-z {
+  background-color: #00FF44
 }
 
 #ui-chat-name {

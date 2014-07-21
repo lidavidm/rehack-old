@@ -21,5 +21,21 @@ module NightfallHack {
         hide() {
             this._ractive.el.style.display = 'none';
         }
+
+        setName(name: string) {
+            this._ractive.set('name', name);
+            var avatar = name.slice(0, 8);
+            var blocks = this._ractive.findAll('.avatar-block');
+            for (var i = 0; i < avatar.length; i++) {
+                blocks[i].className = 'avatar-block char-' + avatar[i];
+            }
+            this._ractive.set('avatar-part-1', 'test')
+        }
+
+        options(options: string[]) {
+        }
+
+        say(text: string) {
+        }
     }
 }
