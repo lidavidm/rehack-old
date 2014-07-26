@@ -28,6 +28,8 @@ Every mechanic here needs to serve a purpose and suit a playstyle.
   - Relies on hacking on programs (TODO: need different verb)
 - Exploit master
   - Examining and counterplaying enemies with specialized programs
+  - Constant purchasing of exploits
+  - Some way to find exploits with minigame?
 
 - Need ramifications
   - Detection risk?

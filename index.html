@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Nightfall</title>
+    <title>re/hack</title>
     <link rel="stylesheet" href="main.css" type="text/css" />
     <script src="ractive.js"></script>
     <script src="phaser.js"></script>
@@ -56,21 +56,23 @@
           Chatting with {{ name }}
         </div>
       </div>
-      <div id="ui-dialogue">
-        <ul class="ui-dialogue-list" id="ui-dialogue-entries">
-          <li><span class="name">l33tnerd</span><span class="message">Hey.</span></li>
-          <li class="player"><span class="name">You</span><span class="message">Hey.</span></li>
-          <li><span class="name">l33tnerd</span><span class="message">I got a job for you</span></li>
-          <li><span class="name">l33tnerd</span><span class="message">Interested?</span></li>
-        </ul>
-        <ul class="ui-dialogue-list" id="ui-dialogue-choices">
-          <li><span class="message">What kind of job?</span></li>
-          <li><span class="message">I’m down.</span></li>
-        </ul>
-      </div>
+      <ul class="ui-dialogue-list" id="ui-dialogue-entries">
+        {{ #messages }}
+        <li class="{{ # player }} player {{ / }}"><span class="name">{{ #npc }}{{ name }}{{ / }}{{ #player }}You{{ / }}</span><span class="message"> {{ text }}</span></li>
+        {{ / }}
+      </ul>
+      <ul class="ui-dialogue-list" id="ui-dialogue-choices">
+        {{ #choices:i }}
+        <li class="message" data-index="{{ i }}" on-click="choice">{{ . }}</li>
+        {{ / }}
+        {{ ^choices }}
+        {{ name }} is typing<span class="typing-indicator"><span>.</span><span>.</span><span>.</span></span>
+        {{ / }}
+      </ul>
     </template>
   </head>
   <body>
+    <h1>re/hack</h1>
     <div id="container">
       <div id="content"></div>
       <div id="ui">

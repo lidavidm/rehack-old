@@ -14,6 +14,8 @@ module NightfallHack {
             this.state.add('BattleState', BattleState);
             this.state.add('AfterBattle', AfterBattle);
 
+            this.save.quests.add(new IntroQuest(this));
+
             this.state.start('WorldMap');
         }
     }

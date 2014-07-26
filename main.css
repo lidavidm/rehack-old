@@ -1,13 +1,22 @@
 @import url(http://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic,700italic);
 
 body {
+  background: #000000;
+  color: #FFF;
   font-family: "Ubuntu Mono", monospace;
+}
+
+h1 {
+  text-align: center;
+  text-transform: uppercase;
+  font-weight: normal;
 }
 
 #container {
   position: relative;
   width: 800px;
   height: 600px;
+  margin: auto;
 }
 
 #ui, #ui-chat {
@@ -31,9 +40,9 @@ body {
 #ui-chat {
   font-size: 1rem;
   top: 2.5%;
-  bottom: 45%;
   right: 2.5%;
   left: 55%;
+  height: 16.75rem;
   border: 1px solid #00AA00;
   background: rgba(0,0,0,0.8);
   color: #FFF;
@@ -246,16 +255,23 @@ body {
 }
 
 #ui-dialogue-entries {
+  position: absolute;
+  top: 1.25em;
+  left: 0;
+  right: 0;
+  height: 15em;
   margin: 0.25em;
+  overflow-y: hidden;
 }
 
 #ui-dialogue-choices {
   position: absolute;
-  bottom: 0;
+  top: 16.75em;
   left: 0;
   right: 0;
   counter-reset: message;
-  border-top: 1px solid #00AA00;
+  border: 1px solid #00AA00;
+  background: rgba(0,0,0,0.8);
 }
 
 #ui-dialogue-choices .message {
@@ -373,4 +389,92 @@ body {
 #ui-commands ul li button:active {
   color: #007700;
   border: 0;
+}
+
+.typing-indicator span:nth-child(1) {
+  -webkit-animation: typing-animation 1800ms step-start 0s infinite;
+  -moz-animation:    typing-animation 1800ms steps(5, start) infinite;
+  -o-animation:      typing-animation 1800ms steps(5, start) infinite;
+  animation:         typing-animation 1800ms step-start 0s infinite;
+}
+
+.typing-indicator span:nth-child(2) {
+  -webkit-animation: typing-animation-2 1800ms step-start 0s infinite;
+  -moz-animation:    typing-animation-2 1800ms steps(5, start) infinite;
+  -o-animation:      typing-animation-2 1800ms steps(5, start) infinite;
+  animation:         typing-animation-2 1800ms step-start 0s infinite;
+}
+
+.typing-indicator span:nth-child(3) {
+  -webkit-animation: typing-animation-3 1800ms step-start 0s infinite;
+  -moz-animation:    typing-animation-3 1800ms steps(5, start) infinite;
+  -o-animation:      typing-animation-3 1800ms steps(5, start) infinite;
+  animation:         typing-animation-3 1800ms step-start 0s infinite;
+}
+
+@-webkit-keyframes typing-animation {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+@-moz-keyframes typing-animation {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+@-o-keyframes typing-animation {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+@keyframes typing-animation {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes typing-animation-2 {
+  0% { opacity: 0.0; }
+  16% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+@-moz-keyframes typing-animation-2 {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+@-o-keyframes typing-animation-2 {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+@keyframes typing-animation-2 {
+  0% { opacity: 0.0; }
+  16% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+
+@-webkit-keyframes typing-animation-3 {
+  0% { opacity: 0.0; }
+  33% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+@-moz-keyframes typing-animation-3 {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+@-o-keyframes typing-animation-3 {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
+}
+@keyframes typing-animation-3 {
+  0% { opacity: 0.0; }
+  33% { opacity: 1.0; }
+  50% { opacity: 0.0; }
+  100% { opacity: 1.0; }
 }

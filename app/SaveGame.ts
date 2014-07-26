@@ -59,6 +59,8 @@ module NightfallHack {
         };
         netcoins: number = 0;
 
+        quests = new QuestManager();
+
         constructor(name: string) {
         }
 

@@ -14,10 +14,8 @@ module NightfallHack {
 
         create() {
             this.domUi = this.game.domUi;
-            this.chatUi = this.game.chatUi;
             this.domUi.hide();
             this.domUi.hideExtra();
-            this.chatUi.setName('l33tnerd');
 
             this.game.world.bounds = new Phaser.Rectangle(0, 0, 16 * 64, 16 * 64);
             this.game.camera.bounds = this.game.world.bounds;
@@ -30,13 +28,17 @@ module NightfallHack {
 
             this.game.input.mouse.mouseUpCallback = (e) => {
                 // XXX figure out why
-                var x = e.x + 2*this.game.camera.x;
-                var y = e.y + 2*this.game.camera.y;
+                // var x = e.x + 2*this.game.camera.x;
+                // var y = e.y + 2*this.game.camera.y;
+                var x = e.offsetX;
+                var y = e.offsetY;
                 var point = new Phaser.Point();
                 this.layer.getTileXY(x, y, point);
                 var tileType = (<any> this.layer.layer).data[point.y][point.x].index;
                 this.tileClicked(point.x, point.y, tileType);
             };
+
+            this.game.save.quests.onCreate(this, "WorldMap");
         }
 
         tileClicked(x: number, y: number, type: number) {
