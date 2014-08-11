@@ -19,12 +19,14 @@ module NightfallHack {
         layer: Phaser.TilemapLayer;
         domUi: DomUi;
         chatUi: ChatUi;
+        highlight: Phaser.Image;
 
         preload() {
             this.game.load.image('background', 'assets/textures/background.png');
             this.game.load.tilemap('worldmap', 'assets/maps/worldmap.json', null,
                                    Phaser.Tilemap.TILED_JSON);
             this.game.load.image('worldmap_tileset', 'assets/textures/worldmap_tileset.png');
+            this.game.load.image('tile_selected', 'assets/textures/tile_selected_world.png');
         }
 
         create() {
@@ -35,6 +37,9 @@ module NightfallHack {
             this.game.world.bounds = new Phaser.Rectangle(0, 0, 16 * 64, 16 * 64);
             this.game.camera.bounds = this.game.world.bounds;
             this.game.add.tileSprite(0, 0, 16*64, 16*64, "background");
+
+            this.highlight = this.game.add.image(-32, -32, 'tile_selected');
+            this.highlight.visible = false;
 
             this.map = new Phaser.Tilemap(this.game, 'worldmap');
             this.map.addTilesetImage('worldmap_tileset', 'worldmap_tileset');
@@ -74,6 +79,10 @@ module NightfallHack {
                 var data = this.game.save.netData[identifier];
                 this.domUi.show();
 
+                this.highlight.visible = true;
+                this.highlight.x = 64 * x;
+                this.highlight.y = 64 * y;
+
                 var commands = [];
                 var reachable = this.reachable(identifier);
                 if (reachable) {
@@ -103,6 +112,7 @@ module NightfallHack {
             else {
                 this.domUi.objectDeselected();
                 this.domUi.hide();
+                this.highlight.visible = false;
             }
         }
 
