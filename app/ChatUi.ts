@@ -1,4 +1,5 @@
 declare var Ractive: any;
+declare var Promise: any;
 
 module NightfallHack {
     interface Message {

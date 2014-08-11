@@ -1,4 +1,19 @@
 module NightfallHack {
+    enum TileType {
+        Blank = 1,
+        ComputerEnemy,
+        PathUR,
+        PathRD,
+        ComputerFriendly,
+        ComputerUnreachable,
+        PathDR,
+        PathRU,
+        Blank1,
+        Blank2,
+        PathLR,
+        PathUD
+    };
+
     export class WorldMap extends State {
         map: Phaser.Tilemap;
         layer: Phaser.TilemapLayer;
@@ -26,10 +41,22 @@ module NightfallHack {
             this.layer = this.map.createLayer('Tile Layer 1');
             this.layer.fixedToCamera = false;
 
+            var layerData = <any> this.layer.layer.data;
+            layerData.forEach((row, rowNo) => {
+                row.forEach((tile: Phaser.Tile, columnNo: number, row: Phaser.Tile[]) => {
+                    if (tile.index === TileType.ComputerUnreachable) {
+                        var identifier = columnNo.toString() + ":" + rowNo.toString();
+                        if (this.reachable(identifier)) {
+                            row[columnNo].index = TileType.ComputerEnemy;
+                        }
+                        else {
+                            row[columnNo].alpha = 0.9;
+                        }
+                    }
+                });
+            });
+
             this.game.input.mouse.mouseUpCallback = (e) => {
-                // XXX figure out why
-                // var x = e.x + 2*this.game.camera.x;
-                // var y = e.y + 2*this.game.camera.y;
                 var x = e.offsetX;
                 var y = e.offsetY;
                 var point = new Phaser.Point();
@@ -42,7 +69,7 @@ module NightfallHack {
         }
 
         tileClicked(x: number, y: number, type: number) {
-            if (type == 6) {
+            if (type == TileType.ComputerEnemy || type == TileType.ComputerUnreachable) {
                 var identifier = x.toString() + ":" + y.toString();
                 var data = this.game.save.netData[identifier];
                 this.domUi.show();

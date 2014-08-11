@@ -2,7 +2,7 @@
 
 ## World Map
 
-- Fade unreachable nodes
+- ~~Fade unreachable nodes~~
 - More variety in node graphics
 - Drag with mouse
 - Highlight selected object

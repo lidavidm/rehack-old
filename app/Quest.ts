@@ -80,7 +80,8 @@ module NightfallHack {
                     },
                     reward: {
                         npc: [
-                            "You'll get 1 netcoin. Enough to buy you some serious software."
+                            "You'll get 1 netcoin. Enough to buy you some serious software.",
+                            "I'll give you some software to use."
                         ],
                         choices: {
                             "Let's do this. What software you got?": 'pick'
